@@ -49,7 +49,7 @@ public class NewsService {
         var last = repository.findMaximumId();
         return repository.findNewsAfter(last + 1);
     }
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 */30 * * * *")
     private void checkNewNews(){
         Integer lastIdInDB = repository.findMaximumId();
         int lastId = lastIdInDB == null ? 0 : lastIdInDB;
