@@ -58,12 +58,15 @@ public class NewsParser {
 
             String photo = getNewsPhoto(el);
             String text = getNewsText(el);
+            if (text.length() > 650){
+                text = text.substring(0,650);
+            }
 
             if (text.equals("") && photo.equals("")) {
                 continue;
             }
 
-            news.add(new News(newsId, photo, text));
+            news.add(new News(newsId, text, photo));
         }
         return news;
     }

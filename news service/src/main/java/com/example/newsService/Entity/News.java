@@ -19,8 +19,8 @@ import javax.persistence.Table;
 public class News {
     @Id
     private Integer id;
-    @Column(name = "text")
+    @Column(name = "text", length = 650)
     private String text;
-    @Column(name = "photo")
+    @Column(name = "photo", length = 400)
     private String photo;
 }
