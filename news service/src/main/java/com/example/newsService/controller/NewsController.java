@@ -3,9 +3,7 @@ package com.example.newsService.controller;
 import com.example.newsService.Entity.News;
 import com.example.newsService.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +20,14 @@ public class NewsController {
     @GetMapping("/all")
     public List<News> getAllNews(){
         return service.getAllNews();
+    }
+
+    @GetMapping("/after/{id}")
+    public List<News> getNewsAfterId(@PathVariable("id") Integer id){
+        return service.getNewsAfterId(id);
+    }
+    @GetMapping("/last")
+    public List<News> getNewsAfterId(){
+        return service.getNewsAfterId();
     }
 }
