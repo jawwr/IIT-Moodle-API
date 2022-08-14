@@ -1,6 +1,6 @@
 import json
-from typing import List, Dict, Any
-from eventController import Event, Mark
+from datetime import datetime
+from typing import Dict
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -86,3 +86,27 @@ class Parser_IIT_csu(Parser):
         return list_marks
 
 
+class Event:
+    event_name: str
+    date: str
+    lesson_name: str
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4, ensure_ascii=False)
+
+    def __init__(self, event_name: str, date: datetime, lesson_name: str):
+        self.eventName = event_name
+        self.date = date.strftime("%Y-%m-%d")
+        self.lesson_name = lesson_name
+
+
+class Mark:
+    name: str
+    mark: str
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=False, indent=4, ensure_ascii=False)
+
+    def __init__(self, name: str, mark):
+        self.name = name
+        self.date = mark
