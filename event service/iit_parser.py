@@ -14,7 +14,7 @@ class Parser:
     options.add_argument('start-maximized')
     options.add_argument('disable-infobars')
 
-    browser = webdriver.Chrome(chrome_options=options)
+    browser: webdriver
 
     def entry(self, username, password) -> None:
         pass
@@ -41,6 +41,7 @@ class Parser_IIT_csu(Parser):
 
     # Вход на сайт
     def entry(self, username, password) -> None:
+        self.browser = webdriver.Chrome(chrome_options=self.options)
         self.browser.get(self.url)
 
         xpath_username = '//*[@id="username"]'
