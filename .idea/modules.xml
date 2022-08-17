@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/news service/news-service.iml" filepath="$PROJECT_DIR$/news service/news-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/schedule service/schedule service.iml" filepath="$PROJECT_DIR$/schedule service/schedule service.iml" />
       <module fileurl="file://$PROJECT_DIR$/schedule service/schedule-service.iml" filepath="$PROJECT_DIR$/schedule service/schedule-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/user service/user service.iml" filepath="$PROJECT_DIR$/user service/user service.iml" />
     </modules>
   </component>
 </project>

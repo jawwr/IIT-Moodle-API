@@ -1,0 +1,19 @@
+server:
+  port:
+    8080
+spring:
+  datasource:
+    driver-class-name:
+      org.postgresql.Driver
+    username:
+      gymzhyrvnpeffa
+    password:
+      4008e77aaa744de70794011566f034bc937cac576e215b74953307613b45a489
+    url:
+      jdbc:postgresql://ec2-52-49-120-150.eu-west-1.compute.amazonaws.com:5432/d19glhb8m2icr6
+  jpa:
+    hibernate:
+      ddl-auto:
+        update
+    show-sql:
+      true

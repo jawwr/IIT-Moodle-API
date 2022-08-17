@@ -7,6 +7,7 @@
         <option value="$PROJECT_DIR$/schedule service/pom.xml" />
         <option value="$PROJECT_DIR$/news-service/pom.xml" />
         <option value="$PROJECT_DIR$/news service/pom.xml" />
+        <option value="$PROJECT_DIR$/user service/pom.xml" />
       </list>
     </option>
   </component>
