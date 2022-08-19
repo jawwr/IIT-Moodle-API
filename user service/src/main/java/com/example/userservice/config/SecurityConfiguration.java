@@ -2,6 +2,7 @@ package com.example.userservice.config;
 
 import com.example.userservice.auth.AuthEntryPointJwt;
 import com.example.userservice.auth.AuthTokenFilter;
+import com.example.userservice.auth.PasswordEncoderTest;
 import com.example.userservice.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,17 +14,29 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity
+//@EnableGlobalMethodSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
+
+    private final AuthEntryPointJwt authEntryPointJwt;
 
     @Autowired
-    private AuthEntryPointJwt authEntryPointJwt;
+    public SecurityConfiguration(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt authEntryPointJwt) {
+        this.userDetailsService = userDetailsService;
+        this.authEntryPointJwt = authEntryPointJwt;
+    }
+
+    public SecurityConfiguration(boolean disableDefaults, UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt authEntryPointJwt) {
+        super(disableDefaults);
+        this.userDetailsService = userDetailsService;
+        this.authEntryPointJwt = authEntryPointJwt;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -36,10 +49,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(authEntryPointJwt)
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeHttpRequests()
-                .antMatchers("/api/user/login").permitAll()
+                .antMatchers("/api/user/**").permitAll()
+                .antMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new PasswordEncoderTest();
     }
 
     @Bean
@@ -47,8 +66,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new AuthTokenFilter();
     }
 
+    @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
 }

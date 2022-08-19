@@ -17,3 +17,8 @@ spring:
         update
     show-sql:
       true
+app:
+  jwtSecret:
+    MegaLargeSigningSecretKeyForDemoApplicationMegaLargeSigningSecretKeyForDemoApplication
+  jwtExpirationMs:
+    86400000

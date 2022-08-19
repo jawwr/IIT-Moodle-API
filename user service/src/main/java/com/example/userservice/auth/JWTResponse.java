@@ -14,5 +14,5 @@ public class JWTResponse {
     private Long id;
     private String login;
     private String userName;
-    private List<Role> roles;
+    private List<String> roles;
 }

@@ -5,6 +5,7 @@ import com.example.userservice.entity.UserCredential;
 import com.example.userservice.service.UserService;
 import com.example.userservice.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,8 +18,17 @@ public class UserController {
         this.service = service;
     }
 
-    @GetMapping("/login")
-    public User login(@RequestBody UserCredential credential){
-        return service.login(credential);
+//    @GetMapping("/login")
+//    public User login(@RequestBody UserCredential credential){
+//        return service.login(credential);
+//    }
+    @GetMapping("/all")
+    public String getAPI(){
+        return "open API";
+    }
+    @GetMapping("/users")
+    @PreAuthorize("hasRole('USER')")
+    public String getUserAPI(){
+        return "User API";
     }
 }

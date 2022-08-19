@@ -3,6 +3,7 @@ package com.example.userservice.service;
 import com.example.userservice.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Data
 @AllArgsConstructor
 public class UserDetailImpl implements UserDetails {
     private static final long serialVersionUID = 1L;
@@ -18,7 +20,6 @@ public class UserDetailImpl implements UserDetails {
     private Long id;
     private String userName;
     private String login;
-    @JsonIgnore
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
