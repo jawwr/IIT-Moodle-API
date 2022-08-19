@@ -19,6 +19,6 @@ spring:
       true
 app:
   jwtSecret:
-    MegaLargeSigningSecretKeyForDemoApplicationMegaLargeSigningSecretKeyForDemoApplication
+    MegaLargeSigningSecretKeyForIITAPIApplicationMegaLargeSigningSecretKeyForIITAPIApplication
   jwtExpirationMs:
     86400000

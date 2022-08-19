@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -33,6 +34,6 @@ public class User {
     private String surname;
 
     @JoinColumn(name = "user_role")
-    @ManyToMany(fetch = FetchType.LAZY)
-    private Set<Role> role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> role = new HashSet<>();
 }

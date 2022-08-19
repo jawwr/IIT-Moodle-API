@@ -1,15 +1,16 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.entity.User;
-import com.example.userservice.entity.UserCredential;
 import com.example.userservice.service.UserService;
 import com.example.userservice.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
     private final UserService service;
 
@@ -27,8 +28,12 @@ public class UserController {
         return "open API";
     }
     @GetMapping("/users")
-    @PreAuthorize("hasRole('USER')")
-    public String getUserAPI(){
-        return "User API";
+    public List<? extends GrantedAuthority> getUserAPI(){
+        return service.getUserRole();
+    }
+
+    @GetMapping("/users/Admin")
+    public String getAdminAPI(){
+        return "Admin API";
     }
 }
