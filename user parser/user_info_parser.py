@@ -1,10 +1,11 @@
 import json
-import psycopg2
-from config import *
 
+import pika
+import psycopg2
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import pika
+
+from config import *
 
 conn = psycopg2.connect(host=db_host, database=db_dataBase, user=db_username, password=db_password)
 cur = conn.cursor()
@@ -95,35 +96,47 @@ class Parser_IIT_csu(Parser):
 
 
 def parse(login: str, password: str):
-    parser = Parser_IIT_csu(username=login,
-                            password=password)
+    try:
+        parser = Parser_IIT_csu(username=login,
+                                password=password)
 
-    user = parser.parse_user_detail()
-    save(user=user)
+        user = parser.parse_user_detail()
+        save(user=user)
+    except:
+        print("Wrong credentials")
 
 
 def save(user: User):
-    cur.execute("UPDATE users SET group_name=%(group)s, name=%(name)s, surname=%(surname)s WHERE login=%(login)s",
-                {"group": user.group_name, "name": user.name, "surname": user.surname, "login": user.login})
+    id = get_last_id()
+    sql = "INSERT INTO users(id, group_name, login, name, password, surname) VALUES (%(id)s,%(group)s, %(login)s, %(name)s, %(password)s ,%(surname)s)"
+    cur.execute(sql,
+                {"id": id, "group": user.group_name, "name": user.name, "surname": user.surname, "login": user.login,
+                 "password": user.password})
     conn.commit()
 
 
+def get_last_id() -> int:
+    sql = "SELECT MAX(id) FROM users"
+    cur.execute(sql)
+    id = cur.fetchall()
+    if id == [(None,)]:
+        return 1
+    return int(id)
+
+
 def callback(ch, method, properties, body):
+    print("message")
     credentials = UserCredentials(body.decode("utf-8"))
     parse(login=credentials.login, password=credentials.password)
 
 
 def main():
-    try:
-        parameters = pika.ConnectionParameters()
-        connection = pika.BlockingConnection(parameters)
-        channel = connection.channel()
-        channel.queue_declare(queue='myQueue', durable=True)
-        channel.basic_consume(queue='myQueue', auto_ack=True, on_message_callback=callback)
-        channel.start_consuming()
-
-    except():
-        print("Exception")
+    parameters = pika.ConnectionParameters()
+    connection = pika.BlockingConnection(parameters)
+    channel = connection.channel()
+    channel.queue_declare(queue='myQueue', durable=True)
+    channel.basic_consume(queue='myQueue', auto_ack=True, on_message_callback=callback)
+    channel.start_consuming()
 
 
 if __name__ == '__main__':
