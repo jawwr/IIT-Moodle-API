@@ -36,4 +36,9 @@ public class User {
     @JoinColumn(name = "user_role")
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> role = new HashSet<>();
+
+    public User(UserCredential credential) {
+        this.login = credential.getLogin();
+        this.password = credential.getPassword();
+    }
 }

@@ -10,4 +10,12 @@ import lombok.NoArgsConstructor;
 public class UserCredential {
     private String login;
     private String password;
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"login\":" + "\"" + login + "\"," +
+                "\"password\":" + "\"" + password + "\"" +
+                "}";
+    }
 }

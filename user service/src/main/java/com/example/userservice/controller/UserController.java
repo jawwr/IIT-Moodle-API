@@ -1,12 +1,13 @@
 package com.example.userservice.controller;
 
+import com.example.userservice.entity.User;
 import com.example.userservice.service.UserService;
 import com.example.userservice.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/user")
@@ -19,21 +20,8 @@ public class UserController {
         this.service = service;
     }
 
-//    @GetMapping("/login")
-//    public User login(@RequestBody UserCredential credential){
-//        return service.login(credential);
-//    }
-    @GetMapping("/all")
-    public String getAPI(){
-        return "open API";
-    }
-    @GetMapping("/users")
-    public List<? extends GrantedAuthority> getUserAPI(){
-        return service.getUserRole();
-    }
-
-    @GetMapping("/users/Admin")
-    public String getAdminAPI(){
-        return "Admin API";
+    @GetMapping("/me")
+    public User login(){
+        return service.getInfoAboutUser();
     }
 }
