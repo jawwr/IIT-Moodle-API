@@ -1,0 +1,68 @@
+server:
+  port:
+    8082
+spring:
+  application:
+    name:
+      api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled:
+            true
+          lower-case-service-id:
+            true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user/me
+            - Method=GET
+        - id: user-auth
+          uri: lb://user-service
+          predicates:
+            - Path=/api/auth/signIn
+            - Method=Post
+        - id: schedule
+          uri: lb://schedule-service
+          predicates:
+            - Path=/api/schedule/{groupName}
+            - Method=GET
+        - id: create-schedule
+          uri: lb://schedule-service
+          predicates:
+            - Path=/api/schedule/create
+            - Method=POST
+        - id: all-news
+          uri: lb://news-service
+          predicates:
+            - Path=/api/news/all
+            - Method=GET
+        - id: last-news
+          uri: lb://news-service
+          predicates:
+            - Path=/api/news/last
+            - Method=GET
+        - id: news-after-id
+          uri: lb://news-service
+          predicates:
+            - Path=/api/news/after/{id}
+            - Method=GET
+        - id: event-service
+          uri: lb://event-service
+          predicates:
+            - Path=/api/events/{groupName}
+            - Method=GET
+
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8081/eureka/
+
+logging:
+  pattern:
+    console:
+      '%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n'
+

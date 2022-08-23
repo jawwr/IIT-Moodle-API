@@ -22,8 +22,12 @@ public class EventServiceImpl implements EventService{
 
     @Override
     public List<Event> getEventsByGroupName(String group) {
-        var events = repository.findAllByGroupName(group);
-        return events;
+        addQueue(group);//TODO убрать
+        return repository.findAllByGroupName(group);
+    }
+
+    private void addQueue(String message){
+        template.convertAndSend("eventQueue",message);
     }
 
     @Scheduled(cron = "*/10 * */12 * * *")

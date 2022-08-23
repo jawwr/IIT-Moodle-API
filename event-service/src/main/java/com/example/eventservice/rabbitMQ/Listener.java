@@ -10,8 +10,11 @@ import java.util.List;
 @Component
 @EnableRabbit
 public class Listener {
-    @RabbitListener(queues = "")
-    public void listen(List<Event> events){
-
+    @RabbitListener(queues = "myQueue")//TODO поменять имя очереди
+    public void listen(String events){//TODO сделать сериализацию
+        System.out.println("получено сообщение");
+//        for (var event: events){
+//            System.out.println(event.getEventName());
+//        }
     }
 }

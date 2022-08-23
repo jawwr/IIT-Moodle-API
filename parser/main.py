@@ -80,6 +80,8 @@ def convert_marks_to_json(marks: dict) -> list:
 
 class Parser_IIT_csu(Parser):
     url = 'https://eu.iit.csu.ru/login/'
+    username: str
+    password: str
 
     # Вход на сайт
     def entry(self, username, password) -> None:
@@ -94,6 +96,8 @@ class Parser_IIT_csu(Parser):
 
         entry_btn = self.browser.find_element(By.ID, 'loginbtn')
         entry_btn.click()
+        self.username = username
+        self.password = password
 
     # Метод парсинга событий с сайта
     def parse_event(self, password, username) -> list[dict[str]]:
@@ -172,7 +176,8 @@ class Event:
 
 
 def callback(ch, method, properties, body):
-    print(body.decode('utf-8'))
+    print(f"body: {body.decode('utf-8')}")
+    send_events()
 
 
 def parse_user_info():
@@ -180,12 +185,24 @@ def parse_user_info():
 
 
 def parse_events():
-    parameters = pika.ConnectionParameters()
-    connection = pika.BlockingConnection(parameters)
+    connection = pika.BlockingConnection()
     channel = connection.channel()
     channel.queue_declare(queue='eventQueue', durable=True)
     channel.basic_consume(queue='eventQueue', auto_ack=True, on_message_callback=callback)
     channel.start_consuming()
+
+
+def send_events():
+    list_events = [{"eventName": "что-то 1", "lessonName": "какой-то", "date": datetime.now().__str__()},
+                   {"eventName": "что-то 2", "lessonName": "какой-то", "date": datetime.now().__str__()},
+                   {"eventName": "что-то 3", "lessonName": "какой-то", "date": datetime.now().__str__()}]
+    body = json.dumps(list_events)
+    connection = pika.BlockingConnection()
+    channel = connection.channel()
+    # channel.exchange_declare(exchange='', durable=True)
+    channel.queue_declare(queue='myQueue', durable=True)
+    channel.basic_publish(exchange="", routing_key='myQueue', body=body.__str__())
+    # connection.close()
 
 
 def parse_marks():
@@ -193,4 +210,4 @@ def parse_marks():
 
 
 if __name__ == '__main__':
-    pass
+    parse_events()
