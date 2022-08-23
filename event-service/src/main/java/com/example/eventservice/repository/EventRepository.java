@@ -13,4 +13,5 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findAllByGroupName(@Param("group") String group);
     @Query(value = "SELECT DISTINCT group_name FROM events", nativeQuery = true)
     Set<String> findAllGroupName();
+    Boolean existsByGroupName(String groupName);
 }
