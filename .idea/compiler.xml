@@ -8,8 +8,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="news service" />
+        <module name="news-service" />
         <module name="api-GW" />
         <module name="schedule-service" />
+        <module name="event-service" />
         <module name="schedule service" />
         <module name="user service" />
         <module name="user-service" />
@@ -19,6 +21,7 @@
     <bytecodeTargetLevel>
       <module name="api-GW" target="11" />
       <module name="eureka-server" target="11" />
+      <module name="event-service" target="11" />
       <module name="news service" target="11" />
       <module name="news-service" target="11" />
       <module name="schedule service" target="11" />
@@ -31,6 +34,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-GW" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
+      <module name="event-service" options="-parameters" />
       <module name="news service" options="-parameters" />
       <module name="news-service" options="-parameters" />
       <module name="schedule service" options="-parameters" />

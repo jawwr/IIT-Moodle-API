@@ -4,8 +4,10 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/api-GW/api-GW.iml" filepath="$PROJECT_DIR$/api-GW/api-GW.iml" />
       <module fileurl="file://$PROJECT_DIR$/eureka-server/eureka-server.iml" filepath="$PROJECT_DIR$/eureka-server/eureka-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/event-service/event-service.iml" filepath="$PROJECT_DIR$/event-service/event-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/iit moodle api.iml" filepath="$PROJECT_DIR$/.idea/iit moodle api.iml" />
       <module fileurl="file://$PROJECT_DIR$/news service/news service.iml" filepath="$PROJECT_DIR$/news service/news service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/news service/news-service.iml" filepath="$PROJECT_DIR$/news service/news-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/schedule service/schedule service.iml" filepath="$PROJECT_DIR$/schedule service/schedule service.iml" />
       <module fileurl="file://$PROJECT_DIR$/schedule service/schedule-service.iml" filepath="$PROJECT_DIR$/schedule service/schedule-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/user service/user service.iml" filepath="$PROJECT_DIR$/user service/user service.iml" />
