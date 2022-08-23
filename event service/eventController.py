@@ -1,6 +1,11 @@
+import py_eureka_client
 from flask import Flask, request
 from eventService import Event_service
 from apscheduler.schedulers.background import BackgroundScheduler
+
+# eureka_client.init(eureka_server="http://localhost:8761/eureka",
+#                    app_name="data-aggregation-service",
+#                    instance_port=8050)
 
 app = Flask(__name__)
 
@@ -26,4 +31,6 @@ if __name__ == "__main__":
     scheduler = BackgroundScheduler(daemon=True)
     scheduler.add_job(service.parse_events_by_schedule, 'interval', hours=12)
     scheduler.start()
-    app.run(port=8083)
+    app.run(port=8085)
+
+
