@@ -176,11 +176,10 @@ class Event:
 
 
 def callback(ch, method, properties, body):
-    print(f"body: {body.decode('utf-8')}")
     send_events()
 
 
-def parse_user_info():
+def parse_user_info():#TODO разделить по разным программам для асинхронности
     pass
 
 
@@ -201,7 +200,7 @@ def send_events():
     channel = connection.channel()
     # channel.exchange_declare(exchange='', durable=True)
     channel.queue_declare(queue='myQueue', durable=True)
-    channel.basic_publish(exchange="", routing_key='myQueue', body=body.__str__())
+    channel.basic_publish(exchange="", routing_key='myQueue', body=body)
     # connection.close()
 
 
