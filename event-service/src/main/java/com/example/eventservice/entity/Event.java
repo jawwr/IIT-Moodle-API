@@ -24,7 +24,7 @@ public class Event {
     @Column(name = "event_name")
     private String eventName;
     @Column(name = "date_end")
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date date;
     @Column(name = "lesson_name")
     private String lessonName;

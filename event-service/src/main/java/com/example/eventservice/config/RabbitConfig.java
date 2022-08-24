@@ -7,10 +7,12 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 @Configuration
 public class RabbitConfig {
+    public static final String QUEUE_NAME = "eventQueue";
+    public static final String QUEUE_EXCHANGE = "event_service_exchange";
+    public static final String QUEUE_KEY = "event_service_key";
     @Bean
     public CachingConnectionFactory connectionFactory(){
         return new CachingConnectionFactory("localhost");
@@ -30,6 +32,16 @@ public class RabbitConfig {
 
     @Bean
     public Queue myQueue(){
-        return new Queue("eventQueue");
+        return new Queue(QUEUE_NAME);
+    }
+
+    @Bean
+    public TopicExchange exchange(){
+        return new TopicExchange(QUEUE_EXCHANGE);
+    }
+
+    @Bean
+    public Binding binding(Queue queue, TopicExchange exchange){
+        return BindingBuilder.bind(queue).to(exchange).with(QUEUE_KEY);
     }
 }

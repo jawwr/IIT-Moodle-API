@@ -52,7 +52,7 @@ spring:
         - id: event-service
           uri: lb://event-service
           predicates:
-            - Path=/api/events/{groupName}
+            - Path=/api/events/
             - Method=GET
 
 

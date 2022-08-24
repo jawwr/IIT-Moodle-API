@@ -20,4 +20,9 @@ public class UserServiceImpl implements UserService {
         var authUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return repository.findByLogin(((UserDetailImpl)authUser).getLogin());
     }
+
+    @Override
+    public User getUserByLogin(String login) {
+        return repository.findByLogin(login);
+    }
 }

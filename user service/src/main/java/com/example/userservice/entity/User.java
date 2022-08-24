@@ -1,19 +1,22 @@
 package com.example.userservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "login")})
-public class User {
+public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -35,7 +38,20 @@ public class User {
 
     @JoinColumn(name = "user_role")
     @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
     private Set<Role> role = new HashSet<>();
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"id\":\"" + id + "\"," +
+                "\"login\":\"" + login + "\"," +
+                "\"password\":\"" + password + "\"," +
+                "\"groupName\":\"" + groupName + "\"," +
+                "\"name\":\"" + name + "\"," +
+                "\"surname\":\"" + surname + "\"" +
+                '}';
+    }
 
     public User(UserCredential credential) {
         this.login = credential.getLogin();

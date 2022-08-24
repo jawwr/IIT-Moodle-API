@@ -1,10 +1,30 @@
 import json
 import threading
 from datetime import datetime
-import pika
+from typing import List
 
+import pika
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+
+
+class Event:
+    eventName: str
+    date: str
+    lessonName: str
+    groupName: str
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4, ensure_ascii=False)
+
+    def __init__(self, event_name: str,
+                 date: datetime,
+                 lesson_name: str,
+                 group_name: str):
+        self.eventName = event_name
+        self.date = date.strftime("%Y-%m-%d")
+        self.lessonName = lesson_name
+        self.groupName = group_name
 
 
 class Mark:
@@ -57,7 +77,7 @@ class Parser:
 
 
 # Метод для конвертации спаршенных событий в лист объектов
-def convert_event_to_json(text) -> list:
+def convert_event_to_json(text) -> list[str]:
     text_lines = text.split('\n')
     list_events = list()
     for i in range(0, len(text_lines) - 1):
@@ -68,15 +88,16 @@ def convert_event_to_json(text) -> list:
         list_events.append(Event(
             date=text_lines[i],
             event_name=text_lines[i + 1],
-            lesson_name=''))
+            lesson_name='').toJSON()
+                           )
     return list_events
 
 
-def convert_marks_to_json(marks: dict) -> list:
-    list_marks = list()
+def convert_marks_to_json(marks: dict) -> list[Mark]:
+    list_marks: list[Mark] = list[Mark]()
     for i in marks.keys():
         mark = Mark(name=i, mark=marks[i])
-        list_marks.append(mark.__dict__)
+        list_marks.append(mark.toJSON())
 
     return list_marks
 
@@ -103,7 +124,7 @@ class Parser_IIT_csu(Parser):
         self.password = password
 
     # Метод парсинга событий с сайта
-    def parse_event(self, password, username) -> list[dict[str]]:
+    def parse_event(self, password, username) -> list[str]:
         self.entry(password=password, username=username)
 
         calendar_text = self.browser.find_element(By.TAG_NAME, 'body') \
@@ -115,7 +136,7 @@ class Parser_IIT_csu(Parser):
         return convert_event_to_json(calendar_text)
         # Парсинг оценок
 
-    def parse_marks(self, password, username):
+    def parse_marks(self, password, username) -> list[Mark]:
         self.entry(username=username, password=password)
 
         self.browser.get('https://eu.iit.csu.ru/grade/report/overview/index.php')
@@ -135,8 +156,8 @@ class Parser_IIT_csu(Parser):
 
         return convert_marks_to_json(list_marks)
 
-    def parse_user_detail(self) -> User:
-        self.entry()
+    def parse_user_detail(self, username: str, password: str) -> User:
+        self.entry(username=username, password=password)
 
         user = User()
 
@@ -162,31 +183,13 @@ class Parser_IIT_csu(Parser):
         return user
 
 
-class Event:
-    event_name: str
-    date: str
-    lesson_name: str
-
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4, ensure_ascii=False)
-
-    def __init__(self, event_name: str,
-                 date: datetime,
-                 lesson_name: str):
-        self.eventName = event_name
-        self.date = date.strftime("%Y-%m-%d")
-        self.lesson_name = lesson_name
-
-
 def send_events(list_events: list):
-    events = [{"eventName": "что-то 1", "lessonName": "какой-то", "date": datetime.now().__str__()},
-                   {"eventName": "что-то 2", "lessonName": "какой-то", "date": datetime.now().__str__()},
-                   {"eventName": "что-то 3", "lessonName": "какой-то", "date": datetime.now().__str__()}]
-    body = json.dumps(events)
+    body = json.dumps(list_events)
     connection = pika.BlockingConnection()
     channel = connection.channel()
-    channel.queue_declare(queue='eventQueueRepo', durable=True)
-    channel.basic_publish(exchange="", routing_key='eventQueueRepo', body=body)
+    channel.queue_declare(queue='eventQueue', durable=True)
+    channel.basic_publish(exchange="", routing_key='event_service_key', body=body)
+    connection.close()
 
 
 def parse_user_info():
@@ -197,6 +200,8 @@ def parse_events(credentials: str):
     user_credentials = UserCredentials(credentials)
     parser = Parser_IIT_csu()
     events = parser.parse_event(password=user_credentials.password, username=user_credentials.login)
+    for event in events:
+        event.group_name = user_credentials.group
     send_events(events)
 
 
@@ -204,32 +209,43 @@ def parse_marks():
     pass
 
 
-class ConsumerThread(threading.Thread):
-    def __init__(self, queue: str, *args, **kwargs):
-        super(ConsumerThread, self).__init__(*args, **kwargs)
+class ConsumerThread():
+    def __init__(self, queue: str, exchange: str, *args, **kwargs):
 
         self._queue = queue
+        self._exchange = exchange
 
     def callback(self, ch, method, properties, body):
-        if self._queue == 'eventQueueParser':
+        if method.exchange == 'event_parser_exchange':
             parse_events(body.decode('utf-8'))
-        elif self._queue == 'userInfoQueueParser':
+        elif self._queue == 'userQueue':
             parse_user_info()
-        else:
+        elif method.exchange == 'event_parser_exchange':
             parse_marks()
+        else:
+            connection = pika.BlockingConnection()
+            channel = connection.channel()
+            channel.queue_declare(queue="eventQueue", durable=True)
+            channel.basic_publish(exchange='', routing_key="event_service_key", body=body)
+            connection.close()
 
     def run(self) -> None:
         pass
         print(f"queue {self._queue} start")
         connection = pika.BlockingConnection()
         channel = connection.channel()
+        channel.exchange_declare(exchange=self._exchange, exchange_type='topic')
         channel.queue_declare(queue=self._queue, durable=True)
+        channel.queue_bind(routing_key="event_parser_key", exchange=self._exchange, queue=self._queue)
         channel.basic_consume(queue=self._queue, auto_ack=True, on_message_callback=self.callback)
         channel.start_consuming()
 
 
 if __name__ == '__main__':
-    consumers = [ConsumerThread('eventQueueParser'), ConsumerThread('userInfoQueueParser'),
-                 ConsumerThread('marksQueueParser')]
+    # ConsumerThread(queue='eventQueue', exchange='event_parser_topic_exchange').run()
+    consumers = [ConsumerThread(queue='eventQueue', exchange='event_parser_exchange'),
+                 ConsumerThread(queue='userQueue', exchange='user_parser_exchange'),
+                 ConsumerThread(queue='marksQueue', exchange='marks_parser')
+                 ]
     for thread in consumers:
         thread.start()
