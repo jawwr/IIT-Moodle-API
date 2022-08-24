@@ -3,10 +3,7 @@ package com.example.eventservice.controller;
 import com.example.eventservice.entity.Event;
 import com.example.eventservice.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,7 +18,7 @@ public class EventController {
     }
 
     @GetMapping("/{groupName}")
-    public List<Event> getEventsByGroup(@PathVariable("groupName") String group){
+    public List<Event> getEventsByGroup(@PathVariable("groupName") String group, @RequestBody String login){
         return service.getEventsByGroupName(group);
     }
 }

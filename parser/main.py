@@ -1,4 +1,5 @@
 import json
+import threading
 from datetime import datetime
 import pika
 
@@ -21,12 +22,14 @@ class Mark:
 class UserCredentials:
     login: str
     password: str
+    group: str
 
-    def __init__(self, login: str, password: str):
+    def __init__(self, login: str, password: str, group: str):
         self.login = login
         self.password = password
+        self.group = group
 
-    def __init__(self, json_body):
+    def __init__(self, json_body: str):
         self.__dict__ = json.loads(json_body)
 
 
@@ -56,7 +59,7 @@ class Parser:
 # Метод для конвертации спаршенных событий в лист объектов
 def convert_event_to_json(text) -> list:
     text_lines = text.split('\n')
-    list_events = []
+    list_events = list()
     for i in range(0, len(text_lines) - 1):
         if i % 2 == 0:
             continue
@@ -70,7 +73,7 @@ def convert_event_to_json(text) -> list:
 
 
 def convert_marks_to_json(marks: dict) -> list:
-    list_marks = []
+    list_marks = list()
     for i in marks.keys():
         mark = Mark(name=i, mark=marks[i])
         list_marks.append(mark.__dict__)
@@ -117,7 +120,7 @@ class Parser_IIT_csu(Parser):
 
         self.browser.get('https://eu.iit.csu.ru/grade/report/overview/index.php')
 
-        list_marks = {}
+        list_marks = dict()
 
         table = self.browser.find_element(By.XPATH, '//*[@id="overview-grade"]')
 
@@ -175,38 +178,58 @@ class Event:
         self.lesson_name = lesson_name
 
 
-def callback(ch, method, properties, body):
-    send_events()
+def send_events(list_events: list):
+    events = [{"eventName": "что-то 1", "lessonName": "какой-то", "date": datetime.now().__str__()},
+                   {"eventName": "что-то 2", "lessonName": "какой-то", "date": datetime.now().__str__()},
+                   {"eventName": "что-то 3", "lessonName": "какой-то", "date": datetime.now().__str__()}]
+    body = json.dumps(events)
+    connection = pika.BlockingConnection()
+    channel = connection.channel()
+    channel.queue_declare(queue='eventQueueRepo', durable=True)
+    channel.basic_publish(exchange="", routing_key='eventQueueRepo', body=body)
 
 
-def parse_user_info():#TODO разделить по разным программам для асинхронности
+def parse_user_info():
     pass
 
 
-def parse_events():
-    connection = pika.BlockingConnection()
-    channel = connection.channel()
-    channel.queue_declare(queue='eventQueue', durable=True)
-    channel.basic_consume(queue='eventQueue', auto_ack=True, on_message_callback=callback)
-    channel.start_consuming()
-
-
-def send_events():
-    list_events = [{"eventName": "что-то 1", "lessonName": "какой-то", "date": datetime.now().__str__()},
-                   {"eventName": "что-то 2", "lessonName": "какой-то", "date": datetime.now().__str__()},
-                   {"eventName": "что-то 3", "lessonName": "какой-то", "date": datetime.now().__str__()}]
-    body = json.dumps(list_events)
-    connection = pika.BlockingConnection()
-    channel = connection.channel()
-    # channel.exchange_declare(exchange='', durable=True)
-    channel.queue_declare(queue='myQueue', durable=True)
-    channel.basic_publish(exchange="", routing_key='myQueue', body=body)
-    # connection.close()
+def parse_events(credentials: str):
+    user_credentials = UserCredentials(credentials)
+    parser = Parser_IIT_csu()
+    events = parser.parse_event(password=user_credentials.password, username=user_credentials.login)
+    send_events(events)
 
 
 def parse_marks():
     pass
 
 
+class ConsumerThread(threading.Thread):
+    def __init__(self, queue: str, *args, **kwargs):
+        super(ConsumerThread, self).__init__(*args, **kwargs)
+
+        self._queue = queue
+
+    def callback(self, ch, method, properties, body):
+        if self._queue == 'eventQueueParser':
+            parse_events(body.decode('utf-8'))
+        elif self._queue == 'userInfoQueueParser':
+            parse_user_info()
+        else:
+            parse_marks()
+
+    def run(self) -> None:
+        pass
+        print(f"queue {self._queue} start")
+        connection = pika.BlockingConnection()
+        channel = connection.channel()
+        channel.queue_declare(queue=self._queue, durable=True)
+        channel.basic_consume(queue=self._queue, auto_ack=True, on_message_callback=self.callback)
+        channel.start_consuming()
+
+
 if __name__ == '__main__':
-    parse_events()
+    consumers = [ConsumerThread('eventQueueParser'), ConsumerThread('userInfoQueueParser'),
+                 ConsumerThread('marksQueueParser')]
+    for thread in consumers:
+        thread.start()

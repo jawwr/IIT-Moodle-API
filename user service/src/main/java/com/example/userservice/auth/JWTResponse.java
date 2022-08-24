@@ -1,10 +1,12 @@
 package com.example.userservice.auth;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class JWTResponse {
     private String token;
     private final String type = "Bearer";

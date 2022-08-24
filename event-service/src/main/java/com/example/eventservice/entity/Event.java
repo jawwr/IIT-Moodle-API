@@ -1,6 +1,6 @@
 package com.example.eventservice.entity;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +24,7 @@ public class Event {
     @Column(name = "event_name")
     private String eventName;
     @Column(name = "date_end")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date date;
     @Column(name = "lesson_name")
     private String lessonName;

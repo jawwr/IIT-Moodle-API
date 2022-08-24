@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthService service;
-
-    @Autowired
-    public AuthController(AuthService service) {
-        this.service = service;
-    }
-
-    @PostMapping("/signIn")
-    public ResponseEntity<?> authUser(@RequestBody UserCredential credential) {
-        var response = service.signIn(credential);
-        return ResponseEntity.ok(response);
-    }
+//    private final AuthService service;
+//
+//    @Autowired
+//    public AuthController(AuthService service) {
+//        this.service = service;
+//    }
+//
+//    @PostMapping("/signIn")
+//    public ResponseEntity<?> authUser(@RequestBody UserCredential credential) {
+//        var response = service.signIn(credential);
+//        return ResponseEntity.ok(response);
+//    }
 }
