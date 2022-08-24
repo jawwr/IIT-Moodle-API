@@ -2,6 +2,8 @@ package com.example.userservice.config;
 
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -22,11 +24,13 @@ public class BrokerConfig {
 
     @Bean
     public RabbitTemplate rabbitTemplate(){
-        return new RabbitTemplate(connectionFactory());
+        RabbitTemplate template = new RabbitTemplate(connectionFactory());
+        template.setExchange("user_service_exchange");
+        return template;
     }
 
     @Bean
     public Queue myQueue(){
-        return new Queue("myQueue");
+        return new Queue("userQueue");
     }
 }
