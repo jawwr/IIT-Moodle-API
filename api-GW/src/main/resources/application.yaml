@@ -45,7 +45,7 @@ spring:
         - id: schedule
           uri: lb://schedule-service
           predicates:
-            - Path=/api/schedule/{groupName}
+            - Path=/api/schedule
             - Method=GET
         - id: create-schedule
           uri: lb://schedule-service
@@ -72,11 +72,6 @@ spring:
           predicates:
             - Path=/api/events/
             - Method=GET
-        - id: schedule-test
-          uri: lb://schedule-service
-          predicates:
-              - Path=/api/schedule/test
-              - Method=GET
 
 
 eureka:

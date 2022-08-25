@@ -9,11 +9,11 @@ spring:
     driver-class-name:
       org.postgresql.Driver
     url:
-      jdbc:postgresql://ec2-54-77-40-202.eu-west-1.compute.amazonaws.com:5432/d9ec328geo08da
+      jdbc:postgresql://ec2-52-49-120-150.eu-west-1.compute.amazonaws.com:5432/d122g8s7agjtv6
     username:
-      elqynhbpgxwtyd
+      iycbofqnkejrci
     password:
-      608f07209db61662ae5a27c8dfc4e1ca392934c47c2ea4bd23db0450981597fd
+      8b65243d8d3544c8a574c838995165b1387fc5eb9bd1fba3d9bdb53b6a130358
   jpa:
     hibernate:
       ddl-auto:
