@@ -24,21 +24,21 @@ public class Listener {
         this.template = template;
     }
 
-    @RabbitListener(queues = "userQueue")
+    @RabbitListener(queues = "userQueue")//слушает очередь для обмена даннымипользователя
     public void getUserByLogin(String message) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            RabbitMessage rabbitMessage = mapper.readValue(message, RabbitMessage.class);
+            RabbitMessage rabbitMessage = mapper.readValue(message, RabbitMessage.class);///парсит полученное сообшение в специальный класс
             System.out.println("Message receive from: " + rabbitMessage.getExchange() + " " + "Time: " + LocalTime.now());//TODO добавить логгер
-            var login = rabbitMessage.getMessage();
+            var login = rabbitMessage.getMessage();//парсит все нужные данные
             var exchange = rabbitMessage.getExchange();
             var key = rabbitMessage.getKey();
-            var user = service.getUserByLogin(login);
-            if(user == null){
+            var user = service.getUserByLogin(login);//поиск юзера, логин которого пришел в сообщении
+            if(user == null){//если юзер не найден, то он становится дефолтным
                 user = new User();
             }
 
-            template.convertAndSend(exchange,key, user.toString());
+            template.convertAndSend(exchange,key, user.toString());//отправка сообщения обратно отправителю
         } catch (Exception e) {
             e.printStackTrace();
         }

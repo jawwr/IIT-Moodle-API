@@ -29,7 +29,7 @@ public class Schedule {
     @JoinColumn(name = "schedule_id")
     private List<Lesson> lessons;
 
-    public Schedule(ScheduleDTO scheduleDTO) {
+    public Schedule(ScheduleDTO scheduleDTO) {//метод конвертации DTO класса в рабочий
         this.groupName = scheduleDTO.getGroupName();
         this.lessons = getLessonsFromWeek(scheduleDTO.getFirstWeek());
         this.lessons.addAll(getLessonsFromWeek(scheduleDTO.getSecondWeek()));

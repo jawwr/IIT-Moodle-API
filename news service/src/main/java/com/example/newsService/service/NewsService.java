@@ -13,6 +13,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Сервис для работы с новостямииз леты телеграмма
+ */
 @Service
 @EnableScheduling
 public class NewsService {
@@ -25,18 +28,25 @@ public class NewsService {
         this.parser = parser;
     }
 
+    /**
+     * Метод получения всего списка новостей из бд
+     */
     public List<News> getAllNews() {
         return repository.findAll();
     }
 
-    public void saveNews(News news) {
-        repository.save(news);
-    }
-
+    /**
+     * Метод сохранения списка новостей в бд
+     * @param news Список новостей, которое надо сохранить
+     */
     public void saveAllNews(List<News> news) {
         repository.saveAll(news);
     }
 
+    /**
+     * Метод получения новостей после указаного id
+     * @param id id новости послее которой надо получить новости
+     */
     public List<News> getNewsAfterId(Integer id) {
         if (id == null) {
             var last = repository.findMaximumId();
@@ -45,10 +55,17 @@ public class NewsService {
         return repository.findNewsAfter(id);
     }
 
-    public List<News> getNewsAfterId() {
+    /**
+     * Метод получения последних новостей
+     */
+    public List<News> getLastNews() {
         var last = repository.findMaximumId();
         return repository.findNewsAfter(last + 1);
     }
+
+    /**
+     * Метод парсинга новостей с расписанием
+     */
     @Scheduled(cron = "0 */30 * * * *")
     private void checkNewNews(){
         Integer lastIdInDB = repository.findMaximumId();
@@ -60,6 +77,10 @@ public class NewsService {
         }
     }
 
+    /**
+     * Метод проверки новостей с фоттографиями на валидность фотографий
+     * (сдеелано потому что телеграмм постоянно меняет адресс фотографий)
+     */
     @Scheduled(cron = "0 0 4 * * *")
     private void checkNewsPhoto() {
         var allNews = getAllNews();
@@ -78,6 +99,13 @@ public class NewsService {
         }
 
     }
+
+    /**
+     * Метод проверки соединения с сервером
+     * @param path путь, который нужно проверить
+     * @return true - если соединение нормальное
+     * false - если ответ сервера не правильый
+     */
 
     private boolean checkNormalConnection(String path) {
         int responseCode = 0;

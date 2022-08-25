@@ -7,27 +7,41 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Контроллер для работы с новостями
+ */
 @RestController
 @RequestMapping("/api/news")
 public class NewsController {
-    private NewsService service;
+    private final NewsService service;
 
     @Autowired
     public NewsController(NewsService service) {
         this.service = service;
     }
 
-    @GetMapping("/all")
+    /**
+     * Метод для получения всех новостей из базы данных
+     * @return Список новостей
+     */
+    @GetMapping("/all")//
     public List<News> getAllNews(){
         return service.getAllNews();
     }
-
+    /**
+     * Метод для получения новостей после указанного  id
+     * @return Список новостей
+     */
     @GetMapping("/after/{id}")
-    public List<News> getNewsAfterId(@PathVariable("id") Integer id){
+    public List<News> getLastNews(@PathVariable("id") Integer id){
         return service.getNewsAfterId(id);
     }
+    /**
+     * Метод для получения последних новостей
+     * @return Список новостей
+     */
     @GetMapping("/last")
-    public List<News> getNewsAfterId(){
-        return service.getNewsAfterId();
+    public List<News> getLastNews(){
+        return service.getLastNews();
     }
 }

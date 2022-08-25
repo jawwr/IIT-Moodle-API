@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * Сервис для работы с событиями
+ */
 @Service
 public class EventServiceImpl implements EventService {
     private final EventRepository repository;
@@ -28,10 +31,16 @@ public class EventServiceImpl implements EventService {
         lastParse = LocalDateTime.now();
     }
 
+    /**
+     * Получение списка событитй по логину пользователя
+     * @param login
+     * @return {@link List}
+     * @throws UserDoesNotExistException
+     */
     @Override
-    public List<Event> getEventsByGroupName(String login) throws UserDoesNotExistException {
-        Map<String, String> userCredentials = getUser(login);
-        if (userCredentials.get("id").equals("null")) {
+    public List<Event> getEvents(String login) throws UserDoesNotExistException {
+        Map<String, String> userCredentials = getUser(login);//получение данных пользователя
+        if (userCredentials.get("id").equals("null")) {//если пользователя не существует, то выбрасывается исключение
             throw new UserDoesNotExistException();
         }
         String group = userCredentials.get("groupName");
@@ -47,6 +56,11 @@ public class EventServiceImpl implements EventService {
         return repository.findAllByGroupName(group);
     }
 
+    /**
+     * Метод получения юзера из сервиса с пользователями
+     * @param login
+     * @return {@link Map}
+     */
     private Map<String, String> getUser(String login) {
         template.convertAndSend("user_service_exchange", "user_service_key", new RabbitMessage(login));
 
@@ -68,6 +82,10 @@ public class EventServiceImpl implements EventService {
         return user;
     }
 
+    /**
+     * Метод получения ссписка событий из парсера
+     * @return {@link List}
+     */
     private List<Event> receiveEvents() {
         try {
             List message = (List) template.receiveAndConvert(RabbitConfig.QUEUE_KEY);
@@ -86,14 +104,21 @@ public class EventServiceImpl implements EventService {
         return new ArrayList<>();
     }
 
+    /**
+     * Метод отправки сообщения для парсинга событий
+     * @param credentials
+     */
     private void parseEvent(Map<String, String> credentials) {
         template.convertAndSend("event_parser_exchange", "event_parser_key", credentials);
     }
 
+    /**
+     * Метод для парсинга событий
+     */
     @Scheduled(cron = "*/10 * */12 * * *")
     private void parseEvents() {
         lastParse = LocalDateTime.now();
-        var groups = repository.findAllGroupName();
+        var groups = repository.findAllGroupName();//TODO доделать получение всех событитй и сохранение их в бд
         for (var group : groups) {
             template.convertAndSend("eventQueue", group);
             System.out.println("add to queue");//TODO добавить логгер

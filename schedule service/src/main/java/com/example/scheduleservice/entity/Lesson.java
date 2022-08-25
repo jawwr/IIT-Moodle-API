@@ -42,7 +42,7 @@ public class Lesson {
     @Enumerated(EnumType.STRING)
     private DayOfWeek day;
 
-    public Lesson(LessonDTO lessonDTO, WeekName week, DayOfWeek day) {
+    public Lesson(LessonDTO lessonDTO, WeekName week, DayOfWeek day) {//метод конвертации из DTO
         this.name = lessonDTO.getName();
         this.teacher = lessonDTO.getTeacher();
         this.auditorium = lessonDTO.getAuditorium();

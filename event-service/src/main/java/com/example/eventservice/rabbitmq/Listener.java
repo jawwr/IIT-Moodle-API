@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @EnableRabbit
-public class Listener {
+public class Listener {//класс для разгрузки очереди (в работе неучаствует)
 //    @RabbitListener(queues = RabbitConfig.QUEUE_NAME)
     public void listen(String message){
         System.out.println(message);

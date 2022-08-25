@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
+/**
+ * Контроллер для работы с пользоватеелями
+ */
 @RestController
 @RequestMapping("/api/user")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -20,6 +25,10 @@ public class UserController {
         this.service = service;
     }
 
+    /**
+     * Получение информации о пользователе
+     * @return {@link User}
+     */
     @GetMapping("/me")
     public User login(){
         return service.getInfoAboutUser();

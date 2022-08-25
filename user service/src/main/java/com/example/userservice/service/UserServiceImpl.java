@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Сервис для работы с пользоваттелями
+ */
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
@@ -22,6 +25,11 @@ public class UserServiceImpl implements UserService {
         return new User();//TODO возможно убрать
     }
 
+    /**
+     * Метод для получения данных пользователя по логину
+     * @param login логин пользователя
+     * @return {@link User}
+     */
     @Override
     public User getUserByLogin(String login) {
         return repository.findByLogin(login);

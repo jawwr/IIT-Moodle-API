@@ -16,7 +16,7 @@ public class RabbitConfig {
     @Bean
     public CachingConnectionFactory connectionFactory(){
         return new CachingConnectionFactory("localhost");
-    }
+    } //соединение с rabbitmq
 
     @Bean
     public AmqpAdmin admin(){
@@ -25,7 +25,7 @@ public class RabbitConfig {
 
     @Bean
     public RabbitTemplate rabbitTemplate(){
-        RabbitTemplate template = new RabbitTemplate(connectionFactory());
+        var template = new RabbitTemplate(connectionFactory());//создание шаблона входа в  rabbitmq
         template.setMessageConverter(new Jackson2JsonMessageConverter());
         return template;
     }
