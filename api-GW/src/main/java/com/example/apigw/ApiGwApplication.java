@@ -9,5 +9,4 @@ public class ApiGwApplication {
     public static void main(String[] args) {
         SpringApplication.run(ApiGwApplication.class, args);
     }
-
 }

@@ -1,7 +1,8 @@
 package com.example.eventservice.service;
 
+import com.example.eventservice.config.RabbitConfig;
 import com.example.eventservice.entity.Event;
-import com.example.eventservice.entity.RabbitMessage;
+import com.example.eventservice.rabbitmq.RabbitMessage;
 import com.example.eventservice.repository.EventRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
@@ -26,13 +27,14 @@ public class EventServiceImpl implements EventService {
     public EventServiceImpl(EventRepository repository, AmqpTemplate template) {
         this.repository = repository;
         this.template = template;
-        lastParse = LocalDateTime.now().minusHours(3);
+        lastParse = LocalDateTime.now();
     }
 
     @Override
     public List<Event> getEventsByGroupName(String login) {
-        var userCredentials = getUser(login);
-        var group = userCredentials.get("groupName");
+        Map<String, String> userCredentials = getUser(login);
+        String group = userCredentials.get("groupName");
+        System.out.println(group);
         if (!repository.existsByGroupName(group) || (LocalDateTime.now().getHour() - lastParse.getHour() > 6)) {
             try {
                 parseEvent(userCredentials);
@@ -46,14 +48,25 @@ public class EventServiceImpl implements EventService {
     }
 
     private Map<String, String> getUser(String login) {
-        var message = new RabbitMessage(login);
-        template.convertAndSend("user_service_exchange", "user_service_key", message);
-        return (Map<String, String>) template.receiveAndConvert("event_service_key");
+        template.convertAndSend("user_service_exchange", "user_service_key", new RabbitMessage(login));
+        ObjectMapper mapper = new ObjectMapper();
+        Object receive = null;
+        while (receive == null) {
+            receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME);
+        }
+        String receiveMessage = receive.toString();
+        Map<String, String> user = new HashMap();
+        try {
+            user = mapper.readValue(receiveMessage, Map.class);
+        } catch (Exception e) {
+            e.printStackTrace();//TODO добавить логгер
+        }
+        return user;
     }
 
     private List<Event> receiveEvents() {
         try {
-            List message = (List) template.receiveAndConvert("event_service_key");
+            List message = (List) template.receiveAndConvert(RabbitConfig.QUEUE_KEY);
             if (message == null) {
                 return new ArrayList<>();
             }

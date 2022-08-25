@@ -1,4 +1,4 @@
-package com.example.eventservice.entity;
+package com.example.eventservice.rabbitmq;
 
 import com.example.eventservice.config.RabbitConfig;
 import lombok.Getter;
@@ -11,14 +11,5 @@ public class RabbitMessage {
 
     public RabbitMessage(String message) {
         this.message = message;
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "\"message\":\"" + message + "\"," +
-                "\"exchange\":\"" + exchange + "\"," +
-                "\"key\":\"" + key + "\"" +
-                '}';
     }
 }

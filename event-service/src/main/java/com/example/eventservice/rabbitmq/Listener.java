@@ -1,6 +1,6 @@
-package com.example.scheduleservice.rabbitmq;
+package com.example.eventservice.rabbitmq;
 
-import com.example.scheduleservice.config.RabbitConfig;
+import com.example.eventservice.config.RabbitConfig;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @EnableRabbit
 public class Listener {
 //    @RabbitListener(queues = RabbitConfig.QUEUE_NAME)
-    public void test(String l){
-        System.out.println("schedule service" + l);
+    public void listen(String message){
+        System.out.println(message);
     }
 }

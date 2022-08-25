@@ -28,7 +28,7 @@ public class RabbitConfig {
     @Bean
     public RabbitTemplate rabbitTemplate(){
         var template = new RabbitTemplate(connectionFactory());
-//        template.setMessageConverter(new Jackson2JsonMessageConverter());
+        template.setMessageConverter(new Jackson2JsonMessageConverter());
         return template;
     }
 

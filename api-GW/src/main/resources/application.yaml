@@ -5,6 +5,24 @@ spring:
   application:
     name:
       api-gateway
+  datasource:
+    driver-class-name:
+      org.postgresql.Driver
+    username:
+      aaqecqwhuubpmg
+    password:
+      5f3b33791cfff5bf4bd82f100cbff8dfd6e0ec85d9c4aff7691e47fa44cb89cc
+    url:
+      jdbc:postgresql://ec2-52-211-182-159.eu-west-1.compute.amazonaws.com:5432/dhqenb7autoei
+  jpa:
+    hibernate:
+      ddl-auto:
+          update
+    show-sql:
+        true
+  main:
+    allow-bean-definition-overriding:
+      true
   cloud:
     gateway:
       discovery:
@@ -54,6 +72,11 @@ spring:
           predicates:
             - Path=/api/events/
             - Method=GET
+        - id: schedule-test
+          uri: lb://schedule-service
+          predicates:
+              - Path=/api/schedule/test
+              - Method=GET
 
 
 eureka:
@@ -66,3 +89,8 @@ logging:
     console:
       '%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n'
 
+app:
+  jwtSecret:
+    MegaLargeSigningSecretKeyForIITAPIApplicationMegaLargeSigningSecretKeyForIITAPIApplication
+  jwtExpirationMs:
+    86400000
