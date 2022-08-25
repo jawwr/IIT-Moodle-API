@@ -2,6 +2,7 @@ package com.example.eventservice.service;
 
 import com.example.eventservice.config.RabbitConfig;
 import com.example.eventservice.entity.Event;
+import com.example.eventservice.exceptions.UserDoesNotExistException;
 import com.example.eventservice.rabbitmq.RabbitMessage;
 import com.example.eventservice.repository.EventRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,10 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -31,10 +29,12 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> getEventsByGroupName(String login) {
+    public List<Event> getEventsByGroupName(String login) throws UserDoesNotExistException {
         Map<String, String> userCredentials = getUser(login);
+        if (userCredentials.get("id").equals("null")) {
+            throw new UserDoesNotExistException();
+        }
         String group = userCredentials.get("groupName");
-        System.out.println(group);
         if (!repository.existsByGroupName(group) || (LocalDateTime.now().getHour() - lastParse.getHour() > 6)) {
             try {
                 parseEvent(userCredentials);
@@ -49,10 +49,14 @@ public class EventServiceImpl implements EventService {
 
     private Map<String, String> getUser(String login) {
         template.convertAndSend("user_service_exchange", "user_service_key", new RabbitMessage(login));
+
         ObjectMapper mapper = new ObjectMapper();
         Object receive = null;
         while (receive == null) {
             receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME);
+        }
+        if (receive instanceof Map) {
+            return (Map<String, String>) receive;
         }
         String receiveMessage = receive.toString();
         Map<String, String> user = new HashMap();
@@ -70,7 +74,7 @@ public class EventServiceImpl implements EventService {
             if (message == null) {
                 return new ArrayList<>();
             }
-            List<Event> events = new ArrayList<>();
+            List<Event> events;
             var mapper = new ObjectMapper();
             CollectionType javaType = mapper.getTypeFactory()
                     .constructCollectionType(List.class, Event.class);

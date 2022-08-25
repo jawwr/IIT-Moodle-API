@@ -9,6 +9,9 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Component
 @EnableRabbit
 public class Listener {
@@ -26,7 +29,7 @@ public class Listener {
         try {
             ObjectMapper mapper = new ObjectMapper();
             RabbitMessage rabbitMessage = mapper.readValue(message, RabbitMessage.class);
-            System.out.println("Message receive from: " + rabbitMessage.getExchange());
+            System.out.println("Message receive from: " + rabbitMessage.getExchange() + " " + "Time: " + LocalTime.now());//TODO добавить логгер
             var login = rabbitMessage.getMessage();
             var exchange = rabbitMessage.getExchange();
             var key = rabbitMessage.getKey();

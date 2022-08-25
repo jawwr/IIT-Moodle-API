@@ -1,8 +1,10 @@
 package com.example.scheduleservice.controller;
 
 import com.example.scheduleservice.entity.DTO.ScheduleDTO;
+import com.example.scheduleservice.exceptions.UserDoesNotExistException;
 import com.example.scheduleservice.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -17,24 +19,17 @@ public class ScheduleController {
         this.service = service;
     }
 
-    @GetMapping("/{groupName}")
-    public ScheduleDTO getScheduleByGroupName(@PathVariable("groupName") String groupName){
-        return service.getScheduleByGroupName(groupName);
+    @GetMapping()
+    public ResponseEntity<?> getScheduleByGroupName(@RequestBody Map<String, String> login){
+        try{
+            return ResponseEntity.ok(service.getScheduleByGroupName(login.get("login")));
+        }catch (UserDoesNotExistException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/create")
     public void createSchedule(@RequestBody ScheduleDTO schedule){
         service.createSchedule(schedule);
     }
-
-    @GetMapping("/test")
-    public Map<String, String> test(@RequestBody Map<String, String> login){
-        return service.test(login.get("login"));
-    }
-
-
-//    @PutMapping("/update")
-//    public void updateSchedule(@RequestBody Schedule schedule){
-//        service.updateSchedule(schedule);
-//    }
 }

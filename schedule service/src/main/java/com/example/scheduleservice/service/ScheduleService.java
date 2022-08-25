@@ -3,6 +3,7 @@ package com.example.scheduleservice.service;
 import com.example.scheduleservice.config.RabbitConfig;
 import com.example.scheduleservice.entity.DTO.ScheduleDTO;
 import com.example.scheduleservice.entity.Schedule;
+import com.example.scheduleservice.exceptions.UserDoesNotExistException;
 import com.example.scheduleservice.rabbitmq.RabbitMessage;
 import com.example.scheduleservice.repository.ScheduleRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +25,12 @@ public class ScheduleService {
         this.template = template;
     }
 
-    public ScheduleDTO getScheduleByGroupName(String groupName) {
+    public ScheduleDTO getScheduleByGroupName(String login) throws UserDoesNotExistException {
+        Map<String, String> user = getUser(login);
+        if (user.get("id").equals("null")){
+            throw new UserDoesNotExistException();
+        }
+        var groupName = user.get("groupName");
         Schedule schedule = repository.findByGroupName(groupName);
         return new ScheduleDTO(schedule);
     }
@@ -34,12 +40,15 @@ public class ScheduleService {
         repository.save(schedule);
     }
 
-    public Map<String, String> test(String login) {
+    private Map<String, String> getUser(String login) {
         template.convertAndSend("user_service_exchange", "user_service_key", new RabbitMessage(login));
         ObjectMapper mapper = new ObjectMapper();
         Object receive = null;
         while (receive == null) {
             receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME);
+        }
+        if (receive instanceof Map) {
+            return (Map<String, String>) receive;
         }
         String receiveMessage = receive.toString();
         Map<String, String> user = new HashMap();
