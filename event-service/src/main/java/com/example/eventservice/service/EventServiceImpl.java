@@ -62,13 +62,10 @@ public class EventServiceImpl implements EventService {
      * @return {@link Map}
      */
     private Map<String, String> getUser(String login) {
-        template.convertAndSend("user_service_exchange", "user_service_key", new RabbitMessage(login));
+        sendMessageToUserService(login);
 
         ObjectMapper mapper = new ObjectMapper();
-        Object receive = null;
-        while (receive == null) {
-            receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME);
-        }
+        var receive = receiveUser();
         if (receive instanceof Map) {
             return (Map<String, String>) receive;
         }
@@ -81,6 +78,17 @@ public class EventServiceImpl implements EventService {
         }
         return user;
     }
+    private Object receiveUser(){
+        Object receive = null;
+        while (receive == null) {
+            receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME);
+        }
+        return receive;
+    }
+
+    private void sendMessageToUserService(String login){
+        template.convertAndSend("user_service_exchange", "user_service_key", new RabbitMessage(login));
+    }
 
     /**
      * Метод получения ссписка событий из парсера
@@ -88,7 +96,10 @@ public class EventServiceImpl implements EventService {
      */
     private List<Event> receiveEvents() {
         try {
-            List message = (List) template.receiveAndConvert(RabbitConfig.QUEUE_KEY);
+            List message = null;
+            while (message == null){
+                message = (List) template.receiveAndConvert(RabbitConfig.QUEUE_KEY);
+            }
             if (message == null) {
                 return new ArrayList<>();
             }
@@ -106,7 +117,7 @@ public class EventServiceImpl implements EventService {
 
     /**
      * Метод отправки сообщения для парсинга событий
-     * @param credentials
+     * @param credentials Данные пользователя
      */
     private void parseEvent(Map<String, String> credentials) {
         template.convertAndSend("event_parser_exchange", "event_parser_key", credentials);
