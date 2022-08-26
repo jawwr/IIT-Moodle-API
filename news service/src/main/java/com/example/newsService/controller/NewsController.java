@@ -22,7 +22,7 @@ public class NewsController {
 
     /**
      * Метод для получения всех новостей из базы данных
-     * @return Список новостей
+     * @return {@link List}
      */
     @GetMapping("/all")//
     public List<News> getAllNews(){
@@ -30,7 +30,7 @@ public class NewsController {
     }
     /**
      * Метод для получения новостей после указанного  id
-     * @return Список новостей
+     * @return {@link List}
      */
     @GetMapping("/after/{id}")
     public List<News> getLastNews(@PathVariable("id") Integer id){
@@ -38,7 +38,7 @@ public class NewsController {
     }
     /**
      * Метод для получения последних новостей
-     * @return Список новостей
+     * @return {@link List}
      */
     @GetMapping("/last")
     public List<News> getLastNews(){

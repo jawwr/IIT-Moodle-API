@@ -11,6 +11,7 @@
         <option value="$PROJECT_DIR$/api-GW/pom.xml" />
         <option value="$PROJECT_DIR$/event-service/pom.xml" />
         <option value="$PROJECT_DIR$/news service/pom.xml" />
+        <option value="$PROJECT_DIR$/mark-service/pom.xml" />
       </list>
     </option>
   </component>

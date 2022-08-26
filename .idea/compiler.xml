@@ -12,6 +12,7 @@
         <module name="schedule-service" />
         <module name="event-service" />
         <module name="schedule service" />
+        <module name="mark-service" />
         <module name="user service" />
         <module name="user-service" />
         <module name="eureka-server" />
@@ -21,6 +22,7 @@
       <module name="api-GW" target="11" />
       <module name="eureka-server" target="11" />
       <module name="event-service" target="11" />
+      <module name="mark-service" target="11" />
       <module name="news service" target="11" />
       <module name="news-service" target="11" />
       <module name="schedule service" target="11" />
@@ -34,6 +36,7 @@
       <module name="api-GW" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
       <module name="event-service" options="-parameters" />
+      <module name="mark-service" options="-parameters" />
       <module name="news service" options="-parameters" />
       <module name="news-service" options="-parameters" />
       <module name="schedule service" options="-parameters" />

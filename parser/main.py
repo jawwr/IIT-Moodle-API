@@ -206,11 +206,13 @@ def parse_events(credentials: str):
 
 
 def parse_marks():
+    print("message received")
     pass
 
 
-class ConsumerThread():
+class ConsumerThread(threading.Thread):
     def __init__(self, queue: str, exchange: str, *args, **kwargs):
+        super(ConsumerThread, self).__init__(*args, **kwargs)
 
         self._queue = queue
         self._exchange = exchange
@@ -234,9 +236,7 @@ class ConsumerThread():
         print(f"queue {self._queue} start")
         connection = pika.BlockingConnection()
         channel = connection.channel()
-        channel.exchange_declare(exchange=self._exchange, exchange_type='topic')
         channel.queue_declare(queue=self._queue, durable=True)
-        channel.queue_bind(routing_key="event_parser_key", exchange=self._exchange, queue=self._queue)
         channel.basic_consume(queue=self._queue, auto_ack=True, on_message_callback=self.callback)
         channel.start_consuming()
 

@@ -39,6 +39,7 @@ public class Listener {
             }
 
             template.convertAndSend(exchange,key, user.toString());//отправка сообщения обратно отправителю
+            System.out.println("Message has been sent\nUser login: " + user.getLogin());
         } catch (Exception e) {
             e.printStackTrace();
         }
