@@ -31,7 +31,7 @@ public class EventController {
      * @param login
      * @return {@link List<Event>}
      */
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<?> getEvents(@RequestBody Map<String, String> login){
         try {
             return ResponseEntity.ok(service.getEvents(login.get("login")));

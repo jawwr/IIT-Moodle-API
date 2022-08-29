@@ -47,7 +47,7 @@ public class EventServiceImpl implements EventService {
         String group = userCredentials.get("groupName");
         if (!repository.existsByGroupName(group) || (LocalDateTime.now().getHour() - lastParse.getHour() > 6)) {
             try {
-                parseEvent(userCredentials);
+                sendMessageToEventParser(userCredentials);
                 var eventList = receiveEvents();
                 repository.saveAll(eventList);
             } catch (Exception e) {
@@ -117,7 +117,7 @@ public class EventServiceImpl implements EventService {
      *
      * @param credentials Данные пользователя
      */
-    private void parseEvent(Map<String, String> credentials) {
+    private void sendMessageToEventParser(Map<String, String> credentials) {
         template.convertAndSend("event_parser_exchange", "event_parser_key", credentials);
     }
 

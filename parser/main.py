@@ -54,7 +54,7 @@ class UserCredentials:
 
 
 class User:
-    group_name: str
+    groupName: str
     name: str
     surname: str
     login: str
@@ -176,7 +176,7 @@ class Parser_IIT_csu(Parser):
 
         user.name = user_full_name[1]
         user.surname = user_full_name[0]
-        user.group_name = user_group
+        user.groupName = user_group
         user.login = self.username
         user.password = self.password
 
@@ -199,7 +199,7 @@ def parse_user_info(credentials: str):
     parser = Parser_IIT_csu()
     user_info = parser.parse_user_detail(password=user_credentials.password, username=user_credentials.login)
     user_info = user_info.toJSON()
-    send_message(message=user_info, queue='userQueue', routing_key='user_service_key')
+    send_message(message=user_info, queue='userQueueService', routing_key='user_service_key')
 
 
 def parse_events(credentials: str):

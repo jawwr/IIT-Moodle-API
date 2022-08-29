@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @EnableRabbit
 public class Listener {
-    @RabbitListener(queues = RabbitConfig.QUEUE_NAME)
+//    @RabbitListener(queues = RabbitConfig.QUEUE_NAME)
     public void receive(String message){
         System.out.println("Message receive: " + message);
     }

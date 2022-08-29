@@ -1,10 +1,7 @@
 package com.example.userservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -57,4 +54,13 @@ public class User{
         this.login = credential.getLogin();
         this.password = credential.getPassword();
     }
+
+    public User(UserBuilder builder) {
+        this.login = builder.getLogin();
+        this.password = builder.getPassword();
+        this.groupName = builder.getGroupName();
+        this.name = builder.getName();
+        this.surname = builder.getSurname();
+    }
 }
+

@@ -9,9 +9,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Optional;
 
 @Component
 @EnableRabbit
@@ -25,7 +23,7 @@ public class Listener {
         this.template = template;
     }
 
-    @RabbitListener(queues = "userQueue")//слушает очередь для обмена даннымипользователя
+    @RabbitListener(queues = "userQueue")//слушает очередь для обмена данными пользователя
     public void getUserByLogin(String message) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -41,5 +39,9 @@ public class Listener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    @RabbitListener(queues = "userQueueService")
+    public void reOverloaded(String message) {
+        System.out.println(message);
     }
 }

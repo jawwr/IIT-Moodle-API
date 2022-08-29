@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Контроллер для входа в систему
  */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthService service;
@@ -30,7 +30,7 @@ public class AuthController {
             var response = service.signIn(credential);
             return ResponseEntity.ok(response);
         }catch (Exception e){
-            return ResponseEntity.notFound().header(e.getMessage()).build();
+            return ResponseEntity.notFound().build();
         }
     }
 }

@@ -55,7 +55,7 @@ spring:
         - id: event-service
           uri: lb://event-service
           predicates:
-            - Path=/api/events/
+            - Path=/api/events
             - Method=GET
         - id: marks-service
           uri: lb://mark-service

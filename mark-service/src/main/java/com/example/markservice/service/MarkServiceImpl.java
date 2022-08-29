@@ -66,7 +66,7 @@ public class MarkServiceImpl implements MarkService {
         ObjectMapper mapper = new ObjectMapper();
         Object receive = null;
         receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME, 10000L);
-        //из-за конвертера сообщение сообщение с данными пользователя может прийти как в виде мапы, так и в виде строки
+        //из-за конвертера сообщений сообщение с данными пользователя может прийти как в виде мапы, так и в виде строки
         //для этого проверка на то, в каком виде пришло сообщение
         if (receive instanceof Map) {
             return (Map<String, String>) receive;
