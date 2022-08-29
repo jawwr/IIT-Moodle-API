@@ -60,6 +60,9 @@ class User:
     login: str
     password: str
 
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=False, indent=4, ensure_ascii=False)
+
 
 class Parser:
     # Настройки парсера
@@ -88,8 +91,7 @@ def convert_event_to_json(text) -> list[str]:
         list_events.append(Event(
             date=text_lines[i],
             event_name=text_lines[i + 1],
-            lesson_name='').toJSON()
-                           )
+            lesson_name='').toJSON())
     return list_events
 
 
@@ -183,17 +185,20 @@ class Parser_IIT_csu(Parser):
         return user
 
 
-def send_events(list_events: list):
-    body = json.dumps(list_events)
+def send_message(message: str, queue: str, routing_key: str):
     connection = pika.BlockingConnection()
     channel = connection.channel()
-    channel.queue_declare(queue='eventQueue', durable=True)
-    channel.basic_publish(exchange="", routing_key='event_service_key', body=body)
+    channel.queue_declare(queue=queue, durable=True)
+    channel.basic_publish(exchange="", routing_key=routing_key, body=message)
     connection.close()
 
 
-def parse_user_info():
-    pass
+def parse_user_info(credentials: str):
+    user_credentials = UserCredentials(credentials)
+    parser = Parser_IIT_csu()
+    user_info = parser.parse_user_detail(password=user_credentials.password, username=user_credentials.login)
+    user_info = user_info.toJSON()
+    send_message(message=user_info, queue='userQueue', routing_key='user_service_key')
 
 
 def parse_events(credentials: str):
@@ -202,12 +207,16 @@ def parse_events(credentials: str):
     events = parser.parse_event(password=user_credentials.password, username=user_credentials.login)
     for event in events:
         event.group_name = user_credentials.group
-    send_events(events)
+    events = json.dumps(events)
+    send_message(message=events, queue='eventQueue', routing_key='event_service_key')
 
 
-def parse_marks():
-    print("message received")
-    pass
+def parse_marks(credentials: str):
+    user_credentials = UserCredentials(credentials)
+    parser = Parser_IIT_csu()
+    marks = parser.parse_marks(password=user_credentials.password, username=user_credentials.login)
+    marks = json.dumps(marks)
+    send_message(message=marks, queue='marksQueue', routing_key='marks_service_key')
 
 
 class ConsumerThread(threading.Thread):
@@ -221,9 +230,9 @@ class ConsumerThread(threading.Thread):
         if method.exchange == 'event_parser_exchange':
             parse_events(body.decode('utf-8'))
         elif self._queue == 'userQueue':
-            parse_user_info()
+            parse_user_info(body.decode('utf-8'))
         elif method.exchange == 'event_parser_exchange':
-            parse_marks()
+            parse_marks(body.decode('utf-8'))
         else:
             connection = pika.BlockingConnection()
             channel = connection.channel()
