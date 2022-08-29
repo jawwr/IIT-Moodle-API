@@ -17,12 +17,6 @@ public class UserServiceImpl implements UserService {
         this.repository = repository;
     }
 
-    @Override
-    public User getInfoAboutUser() {
-//        var authUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        return repository.findByLogin(((UserDetailImpl)authUser).getLogin());
-        return new User();//TODO возможно убрать
-    }
 
     /**
      * Метод для получения данных пользователя по логину

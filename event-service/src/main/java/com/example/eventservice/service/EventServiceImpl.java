@@ -7,6 +7,7 @@ import com.example.eventservice.rabbitmq.RabbitMessage;
 import com.example.eventservice.repository.EventRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,6 +20,7 @@ import java.util.*;
  * Сервис для работы с событиями
  */
 @Service
+@Slf4j
 public class EventServiceImpl implements EventService {
     private final EventRepository repository;
     private final AmqpTemplate template;
@@ -51,7 +53,7 @@ public class EventServiceImpl implements EventService {
                 var eventList = receiveEvents();
                 repository.saveAll(eventList);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.info(e.getMessage());
             }
         }
         return repository.findAllByGroupName(group);
@@ -76,7 +78,7 @@ public class EventServiceImpl implements EventService {
         try {
             user = mapper.readValue(receiveMessage, Map.class);
         } catch (Exception e) {
-            e.printStackTrace();//TODO добавить логгер
+            log.info(e.getMessage());
         }
         return user;
     }
@@ -107,7 +109,7 @@ public class EventServiceImpl implements EventService {
             events = mapper.readValue(message.toString(), javaType);
             return events;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
         return new ArrayList<>();
     }
@@ -127,10 +129,10 @@ public class EventServiceImpl implements EventService {
     @Scheduled(cron = "*/10 * */12 * * *")
     private void parseEvents() {
         lastParse = LocalDateTime.now();
-        var groups = repository.findAllGroupName();//TODO доделать получение всех событитй и сохранение их в бд
+        var groups = repository.findAllGroupName();
         for (var group : groups) {
             template.convertAndSend("eventQueue", group);
-            System.out.println("add to queue");//TODO добавить логгер
+            log.info("add to queue");
         }
     }
 }

@@ -7,6 +7,7 @@ import com.example.userservice.exceptions.UserDoesNotExistException;
 import com.example.userservice.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class AuthService {
     private final UserRepository repository;
     private final AmqpTemplate template;
@@ -68,7 +70,7 @@ public class AuthService {
             }
             return user;
         }catch (JsonProcessingException e){
-            e.printStackTrace();//TODO добавить логгер
+            log.info(e.getMessage());
         }
         throw new UserDoesNotExistException();
     }

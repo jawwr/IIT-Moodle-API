@@ -3,6 +3,7 @@ package com.example.userservice.rabbitmq;
 import com.example.userservice.entity.User;
 import com.example.userservice.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -13,6 +14,7 @@ import java.time.LocalTime;
 
 @Component
 @EnableRabbit
+@Slf4j
 public class Listener {
     private final UserService service;
     private final AmqpTemplate template;
@@ -28,7 +30,7 @@ public class Listener {
         try {
             ObjectMapper mapper = new ObjectMapper();
             RabbitMessage rabbitMessage = mapper.readValue(message, RabbitMessage.class);///парсит полученное сообшение в специальный класс
-            System.out.println("Message receive from: " + rabbitMessage.getExchange() + " " + "Time: " + LocalTime.now());//TODO добавить логгер
+            log.info("Message receive from: " + rabbitMessage.getExchange() + " " + "Time: " + LocalTime.now());
             var login = rabbitMessage.getMessage();//парсит все нужные данные
             var exchange = rabbitMessage.getExchange();
             var key = rabbitMessage.getKey();
@@ -37,7 +39,7 @@ public class Listener {
             template.convertAndSend(exchange,key, user.toString());//отправка сообщения обратно отправителю
             System.out.println("Message has been sent\nUser login: " + user.getLogin());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
     }
     @RabbitListener(queues = "userQueueService")

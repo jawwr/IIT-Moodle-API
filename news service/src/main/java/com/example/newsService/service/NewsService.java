@@ -3,6 +3,7 @@ package com.example.newsService.service;
 import com.example.newsService.Entity.News;
 import com.example.newsService.parser.NewsParser;
 import com.example.newsService.repository.NewsRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 @Service
 @EnableScheduling
+@Slf4j
 public class NewsService {
     private final NewsRepository repository;
     private final NewsParser parser;
@@ -114,7 +116,7 @@ public class NewsService {
             var con = (HttpURLConnection) uri.openConnection();
             responseCode = con.getResponseCode();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
         return responseCode == 200;
     }

@@ -7,6 +7,7 @@ import com.example.scheduleservice.exceptions.UserDoesNotExistException;
 import com.example.scheduleservice.rabbitmq.RabbitMessage;
 import com.example.scheduleservice.repository.ScheduleRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.Map;
  * Сервис для работы с расписанием
  */
 @Service
+@Slf4j
 public class ScheduleService {
     private final ScheduleRepository repository;
     private final AmqpTemplate template;
@@ -76,7 +78,7 @@ public class ScheduleService {
         try {
             user = mapper.readValue(receiveMessage, Map.class);
         } catch (Exception e) {
-            e.printStackTrace();//TODO добавить логгер
+            log.info(e.getMessage());
         }
         return user;
     }

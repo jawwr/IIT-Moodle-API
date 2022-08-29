@@ -6,6 +6,7 @@ import com.example.markservice.exception.UserDoesNotExistException;
 import com.example.markservice.rabbitmq.RabbitMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class MarkServiceImpl implements MarkService {
     private final RabbitTemplate template;
 
@@ -48,7 +50,7 @@ public class MarkServiceImpl implements MarkService {
         try {
             marks = mapper.readValue(receiveMessage, javaType);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
         return marks;
     }
@@ -76,7 +78,7 @@ public class MarkServiceImpl implements MarkService {
         try {
             user = mapper.readValue(receiveMessage, Map.class);
         } catch (Exception e) {
-            e.printStackTrace();//TODO добавить логгер
+            log.info(e.getMessage());
         }
         return user;
     }
