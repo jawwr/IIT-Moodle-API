@@ -59,10 +59,10 @@ public class ScheduleService {
      * @return {@link Map}
      */
     private Map<String, String> getUser(String login) {
-        //отправка сообщения сеервису
+        //отправка сообщения сервису
         template.convertAndSend("user_service_exchange", "user_service_key", new RabbitMessage(login));
         ObjectMapper mapper = new ObjectMapper();
-        Object receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME);
+        Object receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME, 10000L);
         //из-за конвертера сообщений, сообщение с данными пользователя может прийти как в виде мапы, так и в виде строки
         //для этого проверка на то, в каком виде пришло сообщение
         if (receive instanceof Map) {

@@ -190,7 +190,7 @@ def send_message(message: str, queue: str, routing_key: str):
     channel = connection.channel()
     channel.queue_declare(queue=queue, durable=True)
     channel.basic_publish(exchange="", routing_key=queue, body=message)
-    print('message was sent')
+    print(f'message was sent to {queue}')
     connection.close()
 
 
@@ -221,18 +221,19 @@ def parse_marks(credentials: str):
 
 
 class ConsumerThread(threading.Thread):
-    def __init__(self, queue: str, exchange: str, *args, **kwargs):
+    def __init__(self, queue: str, exchange: str, routing_key: str, *args, **kwargs):
         super(ConsumerThread, self).__init__(*args, **kwargs)
 
         self._queue = queue
         self._exchange = exchange
+        self._routing_key = routing_key
 
     def callback(self, ch, method, properties, body):
         if method.exchange == 'event_parser_exchange':
             parse_events(body.decode('utf-8'))
-        elif method.exchange == 'userQueue':
+        elif method.exchange == 'user_parser_exchange':
             parse_user_info(body.decode('utf-8'))
-        elif method.exchange == 'marks_parser':
+        elif method.exchange == 'marks_parser_exchange':
             parse_marks(body.decode('utf-8'))
         else:
             connection = pika.BlockingConnection()
@@ -250,16 +251,16 @@ class ConsumerThread(threading.Thread):
         channel.exchange_declare(exchange=self._exchange, exchange_type='topic')
         channel.queue_declare(queue=self._queue, durable=True)
 
-        channel.queue_bind(queue=self._queue, exchange=self._exchange)
+        channel.queue_bind(queue=self._queue, exchange=self._exchange, routing_key=self._routing_key)
         channel.basic_consume(queue=self._queue, auto_ack=True, on_message_callback=self.callback)
         channel.start_consuming()
 
 
 if __name__ == '__main__':
-    # ConsumerThread(queue='eventQueue', exchange='event_parser_topic_exchange').run()
-    consumers = [#ConsumerThread(queue='eventQueue', exchange='event_parser_exchange'),
-                 #ConsumerThread(queue='userQueue', exchange='user_parser_exchange'),
-                 ConsumerThread(queue='marksQueueParser', exchange='marks_parser')
-                 ]
+    consumers = [
+        ConsumerThread(queue='eventQueueParser', exchange='event_parser_exchange', routing_key='event_parser_key'),
+        ConsumerThread(queue='userQueueParser', exchange='user_parser_exchange', routing_key='user_parser_key'),
+        ConsumerThread(queue='marksQueueParser', exchange='marks_parser_exchange', routing_key='marks_parser_key')
+        ]
     for thread in consumers:
         thread.start()
