@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Optional;
 
 @Component
 @EnableRabbit
@@ -33,10 +34,7 @@ public class Listener {
             var login = rabbitMessage.getMessage();//парсит все нужные данные
             var exchange = rabbitMessage.getExchange();
             var key = rabbitMessage.getKey();
-            var user = service.getUserByLogin(login);//поиск юзера, логин которого пришел в сообщении
-            if(user == null){//если юзер не найден, то он становится дефолтным
-                user = new User();
-            }
+            User user = service.getUserByLogin(login); //поиск юзера, логин которого пришел в сообщении
 
             template.convertAndSend(exchange,key, user.toString());//отправка сообщения обратно отправителю
             System.out.println("Message has been sent\nUser login: " + user.getLogin());

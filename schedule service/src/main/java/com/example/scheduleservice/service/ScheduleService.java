@@ -62,10 +62,8 @@ public class ScheduleService {
         //отправка сообщения сеервису
         template.convertAndSend("user_service_exchange", "user_service_key", new RabbitMessage(login));
         ObjectMapper mapper = new ObjectMapper();
-        Object receive = null;
-        while (receive == null) {
-            receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME);//цикл вечный, пока сообщение не будетт получено
-        }//из-за конвертера сообщение сообщение с данными пользователя может прийти как в виде мапы, так и в виде строки
+        Object receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME);
+        //из-за конвертера сообщений, сообщение с данными пользователя может прийти как в виде мапы, так и в виде строки
         //для этого проверка на то, в каком виде пришло сообщение
         if (receive instanceof Map) {
             return (Map<String, String>) receive;

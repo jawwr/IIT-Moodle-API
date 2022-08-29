@@ -41,9 +41,7 @@ public class MarkServiceImpl implements MarkService {
     private List<Marks> receiveMarksFromQueue() {
         ObjectMapper mapper = new ObjectMapper();
         Object receive = null;
-        while (receive == null) {
-            receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME);//цикл вечный, пока сообщение не будет получено
-        }
+        receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME, 10000L);
         String receiveMessage = receive.toString();
         List<Marks> marks = new ArrayList<>();
         CollectionType javaType = mapper.getTypeFactory()
@@ -57,7 +55,7 @@ public class MarkServiceImpl implements MarkService {
     }
 
     private void sendMessageToMarksParser(Map<String, String> credentials) {
-        template.convertAndSend("marksQueue", credentials);
+        template.convertAndSend("marks_parser","marksQueueParser", credentials);
     }
 
     private Map<String, String> getUserFromQueue(String login) {
@@ -68,9 +66,7 @@ public class MarkServiceImpl implements MarkService {
     private Map<String, String> receiveUserFromQueue() {
         ObjectMapper mapper = new ObjectMapper();
         Object receive = null;
-//        while (receive == null) {
-            receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME, 10000L);//цикл вечный, пока сообщение не будет получено
-//        }//из-за конвертера сообщение сообщение с данными пользователя может прийти как в виде мапы, так и в виде строки
+        receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME, 10000L);//из-за конвертера сообщение сообщение с данными пользователя может прийти как в виде мапы, так и в виде строки
         //для этого проверка на то, в каком виде пришло сообщение
         if (receive instanceof Map) {
             return (Map<String, String>) receive;

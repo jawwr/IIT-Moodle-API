@@ -7,9 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByLogin(String login);
+    Optional<User> findByLogin(String login);
     Boolean existsByLogin(String login);
 
 //    @Query(value = "INSERT INTO users(login, password) VALUES (:#{#credential.login}, :#{#credential.password})", nativeQuery = true)

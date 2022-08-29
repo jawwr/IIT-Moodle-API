@@ -33,6 +33,7 @@ public class EventServiceImpl implements EventService {
 
     /**
      * Получение списка событитй по логину пользователя
+     *
      * @param login
      * @return {@link List}
      * @throws UserDoesNotExistException
@@ -58,6 +59,7 @@ public class EventServiceImpl implements EventService {
 
     /**
      * Метод получения юзера из сервиса с пользователями
+     *
      * @param login
      * @return {@link Map}
      */
@@ -78,28 +80,23 @@ public class EventServiceImpl implements EventService {
         }
         return user;
     }
-    private Object receiveUser(){
-        Object receive = null;
-        while (receive == null) {
-            receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME);
-        }
-        return receive;
+
+    private Object receiveUser() {
+        return template.receiveAndConvert(RabbitConfig.QUEUE_NAME, 10000L);
     }
 
-    private void sendMessageToUserService(String login){
+    private void sendMessageToUserService(String login) {
         template.convertAndSend("user_service_exchange", "user_service_key", new RabbitMessage(login));
     }
 
     /**
      * Метод получения ссписка событий из парсера
+     *
      * @return {@link List}
      */
     private List<Event> receiveEvents() {
         try {
-            List message = null;
-            while (message == null){
-                message = (List) template.receiveAndConvert(RabbitConfig.QUEUE_KEY);
-            }
+            List message = (List) template.receiveAndConvert(RabbitConfig.QUEUE_KEY, 10000L);
             if (message == null) {
                 return new ArrayList<>();
             }
@@ -117,6 +114,7 @@ public class EventServiceImpl implements EventService {
 
     /**
      * Метод отправки сообщения для парсинга событий
+     *
      * @param credentials Данные пользователя
      */
     private void parseEvent(Map<String, String> credentials) {
