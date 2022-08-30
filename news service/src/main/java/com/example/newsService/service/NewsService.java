@@ -13,6 +13,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Сервис для работы с новостямииз леты телеграмма
@@ -39,6 +41,7 @@ public class NewsService {
 
     /**
      * Метод сохранения списка новостей в бд
+     *
      * @param news Список новостей, которое надо сохранить
      */
     public void saveAllNews(List<News> news) {
@@ -47,6 +50,7 @@ public class NewsService {
 
     /**
      * Метод получения новостей после указаного id
+     *
      * @param id id новости после которой надо получить новости
      */
     public List<News> getNewsAfterId(Integer id) {
@@ -69,11 +73,11 @@ public class NewsService {
      * Метод парсинга новостей с расписанием
      */
     @Scheduled(cron = "0 */30 * * * *")
-    private void checkNewNews(){
+    private void checkNewNews() {
         Integer lastIdInDB = repository.findMaximumId();
         int lastId = lastIdInDB == null ? 0 : lastIdInDB;
         if (!parser.checkNewNewsExist(lastId)) {
-            System.out.println("parse");
+            log.info("Parse events");
             List<News> news = parser.parse(lastId);
             saveAllNews(news);
         }
@@ -83,20 +87,29 @@ public class NewsService {
      * Метод проверки новостей с фотографиями на валидность фотографий
      * (сделано потому что телеграмм постоянно меняет адрес фотографий)
      */
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "0 */30 * * * *")
     private void checkNewsPhoto() {
         var allNews = getAllNews();
+        int lastId = repository.findMaximumId() - 16;
+        allNews = allNews.stream().filter(x -> !x.getPhoto().equals("") || (x.getId() < lastId)).collect(Collectors.toList());
         List<News> crashedPhotoList = new ArrayList<>();
         for (var news : allNews) {
             if (!checkNormalConnection(news.getPhoto())) {
                 crashedPhotoList.add(news);
             }
         }
-        var list = parser.parse();
+        var listEvents = parser.parse();
         for (var news : crashedPhotoList) {
-            var n = list.stream().filter(x -> x.getId() == news.getId()).findFirst().get();
-            if (n != null) {
-                repository.updateNewsPhoto(n.getPhoto(), n.getId());
+            News newsElement = null;
+            for (var parseEvent : listEvents){
+                if (Objects.equals(parseEvent.getId(), news.getId())){
+                    newsElement = parseEvent;
+                }
+                if (newsElement != null)
+                    break;
+            }
+            if (newsElement != null){
+                repository.updateNewsPhoto(newsElement.getPhoto(), newsElement.getId());
             }
         }
 
@@ -104,6 +117,7 @@ public class NewsService {
 
     /**
      * Метод проверки соединения с сервером
+     *
      * @param path путь, который нужно проверить
      * @return true - если соединение нормальное
      * false - если ответ сервера не правильный

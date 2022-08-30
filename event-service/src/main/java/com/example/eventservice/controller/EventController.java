@@ -3,6 +3,9 @@ package com.example.eventservice.controller;
 import com.example.eventservice.entity.Event;
 import com.example.eventservice.exceptions.UserDoesNotExistException;
 import com.example.eventservice.service.EventService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +21,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/events")
+@Api(description = "Controller for work with events")
 public class EventController {
     private final EventService service;
 
@@ -28,14 +32,21 @@ public class EventController {
 
     /**
      * Метод для получения события
+     *
      * @param login
      * @return {@link List<Event>}
      */
     @GetMapping()
-    public ResponseEntity<?> getEvents(@RequestBody Map<String, String> login){
+    @ApiOperation(value = "Getting all events", response = List.class)
+    public ResponseEntity<?> getEvents(@RequestBody @ApiParam(
+            name = "Login",
+            type = "Map",
+            value = "Login of the user",
+            example = "{\n\t\"login\" : \"testlogin@mail.com\"\n}",
+            required = true) Map<String, String> login) {
         try {
             return ResponseEntity.ok(service.getEvents(login.get("login")));
-        }catch (UserDoesNotExistException e){
+        } catch (UserDoesNotExistException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

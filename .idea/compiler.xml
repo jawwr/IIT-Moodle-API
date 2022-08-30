@@ -23,7 +23,7 @@
       <module name="api-GW" target="11" />
       <module name="eureka-server" target="11" />
       <module name="event-service" target="11" />
-      <module name="iit moodle api" target="16" />
+      <module name="iit moodle api" target="11" />
       <module name="mark-service" target="11" />
       <module name="news service" target="11" />
       <module name="news-service" target="11" />

@@ -1,6 +1,8 @@
 package com.example.eventservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,11 +17,13 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
+@ApiModel(value = "Event", description = "Event")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(name = "group_name")
+    @ApiModelProperty(notes = "Group name of the Student",required=true,value="test name")
     private String groupName;
     @Column(name = "event_name")
     private String eventName;

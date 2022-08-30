@@ -29,8 +29,8 @@ public class UserController {
      * Получение информации о пользователе
      * @return {@link User}
      */
-    @GetMapping("/me")
-    public User login(){
-        return service.getInfoAboutUser();
-    }
+//    @GetMapping("/me")
+//    public User login(){
+//        return service.getInfoAboutUser();
+//    }
 }

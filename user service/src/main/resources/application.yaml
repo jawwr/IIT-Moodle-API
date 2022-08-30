@@ -5,6 +5,9 @@ spring:
   application:
     name:
       user-service
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   datasource:
     driver-class-name:
       org.postgresql.Driver

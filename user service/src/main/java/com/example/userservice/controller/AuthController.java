@@ -2,6 +2,8 @@ package com.example.userservice.controller;
 
 import com.example.userservice.entity.UserCredential;
 import com.example.userservice.service.AuthService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/auth")
+@Api(value = "Authentication controller", description = "Authentication controller")
 public class AuthController {
 
     private final AuthService service;
@@ -25,6 +28,7 @@ public class AuthController {
 
     //аунтификация  пользователя
     @PostMapping("/signIn")
+    @ApiOperation("Entry to the system")
     public ResponseEntity<?> authUser(@RequestBody UserCredential credential) {
         try {
             var response = service.signIn(credential);

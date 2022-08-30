@@ -126,7 +126,7 @@ public class EventServiceImpl implements EventService {
     /**
      * Метод для парсинга событий
      */
-    @Scheduled(cron = "*/10 * */12 * * *")
+    @Scheduled(cron = "* * */12 * * *")
     private void parseEvents() {
         lastParse = LocalDateTime.now();
         var groups = repository.findAllGroupName();
