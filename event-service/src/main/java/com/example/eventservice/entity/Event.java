@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -29,7 +30,14 @@ public class Event {
     private String eventName;
     @Column(name = "date_end")
     @JsonFormat(pattern="yyyy-MM-dd")
-    private Date date;
+    private LocalDate date;
     @Column(name = "lesson_name")
     private String lessonName;
+
+    public Event(String groupName, String eventName, LocalDate date, String lessonName) {
+        this.groupName = groupName;
+        this.eventName = eventName;
+        this.date = date;
+        this.lessonName = lessonName;
+    }
 }
