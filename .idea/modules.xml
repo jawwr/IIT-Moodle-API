@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/api-GW/api-GW.iml" filepath="$PROJECT_DIR$/api-GW/api-GW.iml" />
+      <module fileurl="file://$PROJECT_DIR$/api-parser/api-parser.iml" filepath="$PROJECT_DIR$/api-parser/api-parser.iml" />
       <module fileurl="file://$PROJECT_DIR$/eureka-server/eureka-server.iml" filepath="$PROJECT_DIR$/eureka-server/eureka-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/event-service/event-service.iml" filepath="$PROJECT_DIR$/event-service/event-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/iit moodle api.iml" filepath="$PROJECT_DIR$/.idea/iit moodle api.iml" />

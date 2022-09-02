@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -98,15 +99,20 @@ public class EventServiceImpl implements EventService {
      */
     private List<Event> receiveEvents() {
         try {
-            List message = (List) template.receiveAndConvert(RabbitConfig.QUEUE_KEY, 10000L);
+            List<Map<String, String>> message = (List) template.receiveAndConvert(RabbitConfig.QUEUE_KEY, 10000L);
             if (message == null) {
                 return new ArrayList<>();
             }
-            List<Event> events;
-            var mapper = new ObjectMapper();
-            CollectionType javaType = mapper.getTypeFactory()
-                    .constructCollectionType(List.class, Event.class);
-            events = mapper.readValue(message.toString(), javaType);
+            List<Event> events = new ArrayList<>();
+            for (var event : message) {
+                events.add(new Event(event.get("groupName"),
+                        event.get("eventName"),
+                        LocalDate.of(
+                                LocalDate.now().getYear(),
+                                LocalDate.now().getMonth(),
+                                Integer.parseInt(event.get("date"))),
+                        event.get("lessonName")));
+            }
             return events;
         } catch (Exception e) {
             log.info(e.getMessage());

@@ -16,6 +16,7 @@ import java.util.Set;
 public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
 
     @Column(name = "login")

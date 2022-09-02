@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="api-parser" />
         <module name="news-service" />
         <module name="api-GW" />
         <module name="schedule-service" />
@@ -21,6 +22,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="api-GW" target="11" />
+      <module name="api-parser" target="11" />
       <module name="eureka-server" target="11" />
       <module name="event-service" target="11" />
       <module name="iit moodle api" target="11" />
@@ -36,6 +38,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-GW" options="-parameters" />
+      <module name="api-parser" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
       <module name="event-service" options="-parameters" />
       <module name="iit moodle api" options="" />

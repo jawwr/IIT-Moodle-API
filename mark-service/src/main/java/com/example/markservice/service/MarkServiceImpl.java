@@ -42,13 +42,12 @@ public class MarkServiceImpl implements MarkService {
 
     private List<Marks> receiveMarksFromQueue() {
         ObjectMapper mapper = new ObjectMapper();
-        Object receive = template.receiveAndConvert(RabbitConfig.QUEUE_NAME, 10000L);
-        String receiveMessage = receive.toString();
+        List<Map<String, String>> receive = (List) template.receiveAndConvert(RabbitConfig.QUEUE_NAME, 10000L);
         List<Marks> marks = new ArrayList<>();
-        CollectionType javaType = mapper.getTypeFactory()
-                .constructCollectionType(List.class, Marks.class);
         try {
-            marks = mapper.readValue(receiveMessage, javaType);
+            for (var mark : receive){
+                marks.add(new Marks(mark.get("lessonName"), mark.get("mark")));
+            }
         } catch (Exception e) {
             log.info(e.getMessage());
         }
@@ -56,7 +55,7 @@ public class MarkServiceImpl implements MarkService {
     }
 
     private void sendMessageToMarksParser(Map<String, String> credentials) {
-        template.convertAndSend("marks_parser_exchange","marks_parser_key", credentials);
+        template.convertAndSend("marksQueueParser", credentials);
     }
 
     private Map<String, String> getUserFromQueue(String login) {
@@ -77,6 +76,7 @@ public class MarkServiceImpl implements MarkService {
         Map<String, String> user = new HashMap();
         try {
             user = mapper.readValue(receiveMessage, Map.class);
+
         } catch (Exception e) {
             log.info(e.getMessage());
         }
