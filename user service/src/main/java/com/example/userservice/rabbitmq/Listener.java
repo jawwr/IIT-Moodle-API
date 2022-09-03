@@ -42,7 +42,7 @@ public class Listener {
             log.info(e.getMessage());
         }
     }
-    @RabbitListener(queues = "userQueueService")
+//    @RabbitListener(queues = "userQueueService")
     public void reOverloaded(String message) {
         System.out.println(message);
     }

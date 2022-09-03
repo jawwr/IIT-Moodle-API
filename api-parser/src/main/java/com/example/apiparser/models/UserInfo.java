@@ -15,4 +15,14 @@ public class UserInfo {
     private String groupName;
     private String login;
     private String password;
+    @Override
+    public String toString() {
+        return "{" +
+                "\"name\" : \"" + name + "\"," +
+                "\"surname\" : \"" + surname + "\"," +
+                "\"groupName\" : \"" + groupName + "\"," +
+                "\"login\" : \"" + login + "\"," +
+                "\"password\" : \"" + password + "\"" +
+                '}';
+    }
 }

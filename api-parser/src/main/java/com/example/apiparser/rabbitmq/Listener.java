@@ -1,6 +1,5 @@
 package com.example.apiparser.rabbitmq;
 
-import com.example.apiparser.models.UserInfo;
 import com.example.apiparser.parser.Parser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +46,7 @@ public class Listener {
             Map<String, String> credentials = mapper.readValue(message, Map.class);
             var userInfo = parser.parseUserInfo(credentials.get("login"), credentials.get("password"));
 
-            template.convertAndSend("userQueueService", userInfo);
+            template.convertAndSend("userQueueService", userInfo.toString());
         }catch (Exception e){
             log.info(e.getMessage());
         }

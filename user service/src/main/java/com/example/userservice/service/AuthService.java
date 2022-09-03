@@ -48,7 +48,7 @@ public class AuthService {
      * @throws UserDoesNotExistException
      */
     private User parseUser(UserCredential credential) throws UserDoesNotExistException {
-        template.convertAndSend("user_parser_exchange", "user_parser_key", credential);
+        template.convertAndSend("userQueueParser", credential);
         try {
             ObjectMapper mapper = new ObjectMapper();
             var receiveMessage = template.receiveAndConvert("userQueueService", 10000L);

@@ -3,6 +3,7 @@ package com.example.apiparser.parser;
 import com.example.apiparser.models.Event;
 import com.example.apiparser.models.Mark;
 import com.example.apiparser.models.UserInfo;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -18,6 +19,7 @@ public class Parser {
     ChromeOptions options = new ChromeOptions();
 
     {
+        WebDriverManager.chromedriver().setup();
         options.addArguments("incognito");
         options.addArguments("headless");
         options.addArguments("disable-extensions");

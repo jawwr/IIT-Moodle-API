@@ -6,7 +6,6 @@ import com.example.eventservice.exceptions.UserDoesNotExistException;
 import com.example.eventservice.rabbitmq.RabbitMessage;
 import com.example.eventservice.repository.EventRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +74,7 @@ public class EventServiceImpl implements EventService {
             return (Map<String, String>) receive;
         }
         String receiveMessage = receive.toString();
-        Map<String, String> user = new HashMap();
+        Map<String, String> user = new HashMap<>();
         try {
             user = mapper.readValue(receiveMessage, Map.class);
         } catch (Exception e) {
@@ -99,7 +98,7 @@ public class EventServiceImpl implements EventService {
      */
     private List<Event> receiveEvents() {
         try {
-            List<Map<String, String>> message = (List) template.receiveAndConvert(RabbitConfig.QUEUE_KEY, 10000L);
+            List<Map<String, String>> message = (List<Map<String, String>>) template.receiveAndConvert(RabbitConfig.QUEUE_KEY, 10000L);
             if (message == null) {
                 return new ArrayList<>();
             }
@@ -126,19 +125,19 @@ public class EventServiceImpl implements EventService {
      * @param credentials Данные пользователя
      */
     private void sendMessageToEventParser(Map<String, String> credentials) {
-        template.convertAndSend("event_parser_exchange", "event_parser_key", credentials);
+        template.convertAndSend("eventQueueParser", credentials);
     }
 
     /**
      * Метод для парсинга событий
      */
-    @Scheduled(cron = "* * */12 * * *")
-    private void parseEvents() {
-        lastParse = LocalDateTime.now();
-        var groups = repository.findAllGroupName();
-        for (var group : groups) {
-            template.convertAndSend("eventQueue", group);
-            log.info("add to queue");
-        }
-    }
+//    @Scheduled(cron = "* * */12 * * *")
+//    private void parseEvents() {
+//        lastParse = LocalDateTime.now();
+//        var groups = repository.findAllGroupName();
+//        for (var group : groups) {
+//            template.convertAndSend("eventQueue", group);
+//            log.info("add to queue");
+//        }
+//    }
 }
