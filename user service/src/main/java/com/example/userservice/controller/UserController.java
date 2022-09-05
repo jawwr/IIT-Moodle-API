@@ -1,15 +1,15 @@
 package com.example.userservice.controller;
 
 import com.example.userservice.entity.User;
+import com.example.userservice.exceptions.UserDoesNotExistException;
 import com.example.userservice.service.UserService;
 import com.example.userservice.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Контроллер для работы с пользоватеелями
@@ -29,8 +29,12 @@ public class UserController {
      * Получение информации о пользователе
      * @return {@link User}
      */
-//    @GetMapping("/me")
-//    public User login(){
-//        return service.getInfoAboutUser();
-//    }
+    @GetMapping("/me")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> login){
+        try{
+            return ResponseEntity.ok(service.getUserInfoByLogin(login.get("login")));
+        }catch (UserDoesNotExistException e){
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

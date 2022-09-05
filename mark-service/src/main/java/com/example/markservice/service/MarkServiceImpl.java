@@ -5,7 +5,6 @@ import com.example.markservice.entity.Marks;
 import com.example.markservice.exception.UserDoesNotExistException;
 import com.example.markservice.rabbitmq.RabbitMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,8 @@ public class MarkServiceImpl implements MarkService {
 
     private List<Marks> receiveMarksFromQueue() {
         ObjectMapper mapper = new ObjectMapper();
-        List<Map<String, String>> receive = (List) template.receiveAndConvert(RabbitConfig.QUEUE_NAME, 10000L);
+        var message = template.receiveAndConvert(RabbitConfig.QUEUE_NAME, 10000L);
+        List<Map<String, String>> receive = (List) message;
         List<Marks> marks = new ArrayList<>();
         try {
             for (var mark : receive){
