@@ -16,7 +16,11 @@ public class DayDTO {
     private List<LessonDTO> lessons;
 
     public DayDTO(List<Lesson> lessons){
-        this.name = lessons.stream().findFirst().get().getDay().name();
+        var name = lessons.stream().findFirst();
+        if(name.isEmpty()){
+            return;
+        }
+        this.name = name.get().getDay().name();
 
         List<LessonDTO> lessonDTOs = new ArrayList<>();
         for (var lesson : lessons){
