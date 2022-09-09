@@ -42,7 +42,7 @@ public class MarkServiceImpl implements MarkService {
     private List<Marks> receiveMarksFromQueue() {
         ObjectMapper mapper = new ObjectMapper();
         var message = template.receiveAndConvert(RabbitConfig.QUEUE_NAME, 10000L);
-        List<Map<String, String>> receive = (List) message;
+        List<Map<String, String>> receive = (List<Map<String, String>>) message;
         List<Marks> marks = new ArrayList<>();
         try {
             for (var mark : receive){
