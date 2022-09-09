@@ -49,4 +49,4 @@ With this api, you can work with the moodle platform
 The RabbitMQ broker is used to deliver messages between microservices
 
 
-![](/images/Architecture.png)
+![Architecture](https://github.com/jawwr/IIT-Moodle-API/blob/master/images/architecture.png)
