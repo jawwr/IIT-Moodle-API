@@ -26,7 +26,9 @@ public class WeekDTO {
         List<DayDTO> dayDTOs = new ArrayList<>();
         for (var days : DayOfWeek.values()){
             var list = lessons.stream().filter(x -> x.getDay().equals(days)).collect(Collectors.toList());
-            dayDTOs.add(new DayDTO(list));
+            if(!list.isEmpty()){
+                dayDTOs.add(new DayDTO(list));
+            }
         }
         return dayDTOs;
     }
